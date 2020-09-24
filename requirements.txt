@@ -1,0 +1,12 @@
+plotly
+pandas
+numpy
+umap-learn
+scikit-learn
+scikit-bio
+tsne
+hdbscan
+attrs
+psutil
+jupyter
+plotly-orca
