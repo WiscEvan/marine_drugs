@@ -24,16 +24,20 @@ I've reformatted the directory structure following the [Cookiecutter Data Scienc
 
 As mentioned in the [notebooks section](http://drivendata.github.io/cookiecutter-data-science/#notebooks-are-for-exploration-and-communication) I'm going to follow the notebook naming convention: `<step>-<ghuser>-<description>.ipynb`
 
+## FL2015-43 *Tedania ignis*
 
-<img src="marine_drugs/img/FL2015-43-tedania-ignis.JPG"
+<img src="marine_drugs/reports/figures/FL2015-43-tedania-ignis.JPG"
      alt="FL2015-43 _Tedania ignis_"
      style="float:left;margin:5px;width:200px;"/>
 
+## FL2015-9 *Ircinia felix*
 
-<img src="marine_drugs/img/FL2015-9-ircinia-felix.JPG"
+<img src="marine_drugs/reports/figures/FL2015-9-ircinia-felix.JPG"
      alt="FL2015-9 Ircinia felix"
      style="float:left;margin:5px;width:200px;"/>
 
-<img src="marine_drugs/img/FL2015-44-neopetrosia_proxima-or-spheciospongia_versparum.JPG"
+## FL2015-44 _Neopetrosia proxima_ or _Spheciospongia versparium_
+
+<img src="marine_drugs/reports/figures/FL2015-44-neopetrosia_proxima-or-spheciospongia_versparum.JPG"
      alt="FL2015-44 _Neopetrosia proxima_ or _Spheciospongia versparium_"
      style="float:none;margin:5px;width:200px;"/>
