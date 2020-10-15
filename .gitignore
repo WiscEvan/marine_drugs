@@ -2,4 +2,6 @@
 *.xlsx
 .DS_Store
 
+.vscode/
 marine_drugs/data/raw/assemblies/*.fasta
+marine_drugs/data/raw/assemblies/*.stats.tsv

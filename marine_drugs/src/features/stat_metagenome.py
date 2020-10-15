@@ -11,6 +11,7 @@ import pandas as pd
 from Bio.SeqIO import parse
 from Bio.SeqUtils import GC
 
+from pathlib import Path
 from typing import List
 from functools import lru_cache
 
@@ -49,7 +50,7 @@ class Metagenome:
         -------
         pd.DataFrame
             [description]
-        """        
+        """
         content = [
             {
                 "contig": record.id,
@@ -99,49 +100,71 @@ class Metagenome:
             a=df.coverage, weights=df.length / df.length.sum()
         )
         return {
-                "Assembly": self.filename,
-                "Num. Sequences": df.shape[0],
-                "Size (bp)": self.size,
-                "N50": self.fragmentation_metric(0.5),
-                "N10": self.fragmentation_metric(0.1),
-                "N90": self.fragmentation_metric(0.9),
-                "Largest sequence": df.length.idxmax(),
-                "Length Weighted Avg. GC content": length_weighted_gc,
-                "Min GC content": df.GC.min(),
-                "Max GC content": df.GC.max(),
-                "Std. dev. GC content": df.GC.std(),
-                "Length Weighted Avg. Coverage": length_weighted_coverage,
-                "Min Coverage": df.coverage.min(),
-                "Max Coverage": df.coverage.max(),
-                "Std. dev. Coverage": df.coverage.std(),
-            }
+            "Assembly": self.filename,
+            "Num. Sequences": df.shape[0],
+            "Size (bp)": self.size,
+            "N50": self.fragmentation_metric(0.5),
+            "N10": self.fragmentation_metric(0.1),
+            "N90": self.fragmentation_metric(0.9),
+            "Largest sequence": df.length.idxmax(),
+            "Length Weighted Avg. GC content": length_weighted_gc,
+            "Min GC content": df.GC.min(),
+            "Max GC content": df.GC.max(),
+            "Std. dev. GC content": df.GC.std(),
+            "Length Weighted Avg. Coverage": length_weighted_coverage,
+            "Min Coverage": df.coverage.min(),
+            "Max Coverage": df.coverage.max(),
+            "Std. dev. Coverage": df.coverage.std(),
+        }
 
-def statter(assembly):
+
+def assembly_statter(assembly):
     logger.info(f"describing {assembly}")
     return Metagenome(assembly).describe()
 
-def pool_stats(assemblies:List[str], cpus:int=mp.cpu_count())->pd.DataFrame:
+
+def pool_stats(assemblies: List[str], cpus: int = mp.cpu_count()) -> pd.DataFrame:
     """Multiprocessing metagenome statter"""
+
     cpus = len(assemblies) if cpus > len(assemblies) else cpus
     pool = mp.Pool(cpus)
     logger.debug(
         f" Describing stats for {len(assemblies):,} metagenomes using {cpus} cpus."
     )
-    stats = pool.map(statter, assemblies)
+    stats = pool.map(assembly_statter, assemblies)
     pool.close()
     pool.join()
     return pd.DataFrame(stats)
 
-def pool_base_statter(assemblies:List[str], cpus:int=mp.cpu_count())-List[str]:
+
+def base_statter(args):
+    assembly, outdir = args
+    logger.info(f" Describing {assembly} base stats.")
+    metagenome = Metagenome(assembly)
+    df = metagenome.get_base_stats()
+    suffix = Path(metagenome.filename).suffix
+    filename = metagenome.filename.replace(suffix, ".stats.tsv")
+    out = os.path.join(outdir, filename)
+    df.to_csv(out, sep="\t", index=True, header=True)
+    logger.info(f" Finished describing {assembly} base stats.")
+    return out
+
+
+def pool_base_statter(
+    assemblies: List[str], outdir: str, cpus: int = mp.cpu_count()
+) -> List[str]:
+
     cpus = len(assemblies) if cpus > len(assemblies) else cpus
     pool = mp.Pool(cpus)
     logger.debug(
-        f" Describing stats for {len(assemblies):,} metagenomes using {cpus} cpus."
+        f" Retrieving base stats for {len(assemblies):,} metagenomes using {cpus} cpus."
     )
-    stats = pool.map(statter, assemblies)
+    args = [(assembly, outdir) for assembly in assemblies]
+    stats = pool.map(base_statter, args)
     pool.close()
     pool.join()
-    return pd.DataFrame(stats)
+    return stats
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Stat sponge metagenome(s)")
@@ -150,15 +173,29 @@ if __name__ == "__main__":
         "out", help="path to write sponge metagenomes table of statistics"
     )
     parser.add_argument(
-        "--write-base-stats", help="Whether to write base statistics for each contig in metagenome",
-        action="store_true",
-        default=False
+        "--write-base-stats",
+        help="Write base statistics for each contig in metagenome to provided directory. (File naming will follow assembly.stats.tsv)",
     )
 
     args = parser.parse_args()
-    if len(args.assembly) > 1:
-        df = pool_stats(args.assembly)
+    if not os.path.exists(args.out):
+        if len(args.assembly) > 1:
+            df = pool_stats(args.assembly)
+        else:
+            df = pd.DataFrame([assembly_statter(args.assembly)])
+        df.to_csv(args.out, sep="\t", index=False, header=True)
+        logger.info(f"Wrote stats of {df.shape[0]} sponges to {args.out}")
     else:
-        df = pd.DataFrame([statter(args.assembly)])
-    df.to_csv(args.out, sep="\t", index=False, header=True)
-    logger.info(f"Wrote stats of {df.shape[0]} sponges to {args.out}")
+        logger.info(f"{args.out} already exists. Skipping...")
+
+    if args.write_base_stats:
+        if not os.path.exists(args.write_base_stats):
+            logger.info(f"Created {args.write_base_stats}")
+            os.makedirs(args.write_base_stats)
+        if len(args.assembly) > 1:
+            filepaths = pool_base_statter(
+                assemblies=args.assembly, outdir=args.write_base_stats
+            )
+        else:
+            arg = (args.assembly, args.write_base_stats)
+            filepaths = [base_statter(arg)]
