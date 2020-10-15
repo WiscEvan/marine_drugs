@@ -1,5 +1,5 @@
 *.ipynb_checkpoints/
 *.xlsx
-figures/*
 .DS_Store
-data/
+
+marine_drugs/data/raw/assemblies/*.fasta

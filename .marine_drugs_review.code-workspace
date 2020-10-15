@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "Marine Drugs",
+			"path": "."
+		},
+		{
+			"name": "Collection Pictures",
+			"path": "/media/external/kwanlab_files/sponge_pictures"
+		},
+		{
+			"name": "Bob Thacker data",
+			"path": "/media/external/kwanlab_files/Thacker_data"
+		},
+		{
+			"name": "Jason sponge analyses",
+			"path": "/media/external/kwanlab_files/jkwan_files/Sponge_project"
+		}
+	],
+	"settings": {}
+}
