@@ -16,7 +16,7 @@ bacteria.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv bacteria.bin
     $(RECRUITMENT) kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
 
 archaea.binning.tsv : kmers.norm.tsv coverages.tsv archaea.markers.tsv  kmers.embedded.tsv taxonomy.tsv
-    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
+    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv archaea.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
 
 bacteria.binning.tsv : kmers.norm.tsv coverages.tsv bacteria.markers.tsv  kmers.embedded.tsv taxonomy.tsv
    $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
@@ -27,11 +27,16 @@ bacteria.markers.tsv : orfs.faa
 archaea.markers.tsv : orfs.faa
     $(MARKERS) --orfs orfs.faa --kingdom archaea --hmmscan archaea.hmmscan.tsv --out archaea.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
 
-taxonomy.tsv orfs.faa : metagenome.filtered.fna orfs.fna orfs.faa blastp.tsv
+taxonomy.tsv : metagenome.filtered.fna orfs.fna orfs.faa blastp.tsv
     $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl_orfs orfs.fna --prot_orfs orfs.faa --blast blastp.tsv --hits hits.pkl.gz --lca lca.tsv --taxon-method majority_vote taxonomy.tsv outdir
 
+CATEGORY="blastp"
+CORES=30
+
 blastp.tsv : orfs.faa /mnt/autometa_databases/nr.dmnd
-    $(BLASTP) blastp --query orfs.faa --out blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 40
+    $(BLASTP) blastp --query orfs.faa --out blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 30
+
+CATEGORY="simple"
 
 orfs.faa orfs.fna : metagenome.filtered.fna
     $(ORFS) -i metagenome.filtered.fna -a orfs.faa -d orfs.fna -p meta
