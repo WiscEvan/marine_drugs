@@ -3,6 +3,7 @@ black
 biopython
 hdbscan
 jupyter
+ndcctools
 numpy
 pandas
 plotly

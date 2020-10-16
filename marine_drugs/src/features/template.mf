@@ -1,0 +1,42 @@
+# Autometa Makeflow DAG
+LENGTH_FILTER=/home/evan/miniconda3/envs/autometa/bin/autometa-length-filter
+COVERAGES=/home/evan/miniconda3/envs/autometa/bin/autometa-coverage
+KMERS=/home/evan/miniconda3/envs/autometa/bin/autometa-kmers
+ORFS=/home/evan/tools/programs_3rd_party/prokka/binaries/linux/prodigal
+MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
+TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
+BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
+RECRUITMENT=/home/evan/miniconda3/envs/autometa/bin/autometa-unclustered-recruitment
+
+# archaea.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv taxonomy.tsv
+#     $(RECRUITMENT) kmers.norm.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv archaea.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+
+# bacteria.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv taxonomy.tsv
+#     $(RECRUITMENT) kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+
+# archaea.binning.tsv : kmers.norm.tsv coverages.tsv archaea.markers.tsv  kmers.embedded.tsv taxonomy.tsv
+#     $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
+
+# bacteria.binning.tsv : kmers.norm.tsv coverages.tsv bacteria.markers.tsv  kmers.embedded.tsv taxonomy.tsv
+#    $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
+
+bacteria.markers.tsv : orfs.faa
+    $(MARKERS) --orfs orfs.faa --kingdom bacteria --hmmscan bacteria.hmmscan.tsv --out bacteria.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
+
+archaea.markers.tsv : orfs.faa
+    $(MARKERS) --orfs orfs.faa --kingdom archaea --hmmscan archaea.hmmscan.tsv --out archaea.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
+
+# taxonomy.tsv orfs.faa : metagenome.filtered.fna
+#     $(TAXONOMY) --assembly metagenome.filtered.fna --nucl_orfs orfs.fna --prot_orfs orfs.faa --blast orfs.blastp.tsv --taxon-method majority_vote taxonomy.tsv outdir
+
+orfs.faa : metagenome.filtered.fna
+    $(ORFS) -a orfs.faa -i metagenome.filtered.fna -d orfs.fna -p meta
+
+kmers.tsv kmers.norm.tsv kmers.embedded.tsv : metagenome.filtered.fna
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.norm.tsv --embedded kmers.embedded.tsv --size 5 --norm-method am_clr --do-pca --pca-dimensions 50 --embed-dimensions 2 --embed-method bhsne
+
+coverages.tsv : metagenome.filtered.fna
+    $(COVERAGES) --from-spades --assembly metagenome.filtered.fna --out coverages.tsv
+
+metagenome.filtered.fna : metagenome.fasta
+    $(LENGTH_FILTER) metagenome.fasta metagenome.filtered.fna --cutoff 900
