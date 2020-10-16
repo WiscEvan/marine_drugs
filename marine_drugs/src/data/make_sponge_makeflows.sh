@@ -69,6 +69,15 @@ for mg in $metagenomes;do
     # TAXONOMY
     taxonomy="${binnings}/${metagenome}.taxonomy."
     sed -i "s,taxonomy\.,${taxonomy},g" ${makeflow}
+    # BLASTP
+    blastp="${binnings}/${metagenome}.blastp."
+    sed -i "s,blastp\.,${blastp},g" ${makeflow}
+    # HITS
+    hits="${binnings}/${metagenome}.hits."
+    sed -i "s,hits\.,${hits},g" ${makeflow}
+    # LCA
+    lca="${binnings}/${metagenome}.lca."
+    sed -i "s,lca\.,${lca},g" ${makeflow}
     # BACTERIA HMMSCAN
     hmmscan="${binnings}/${metagenome}.bacteria.hmmscan."
     sed -i "s,bacteria\.hmmscan\.,${hmmscan},g" ${makeflow}
@@ -88,11 +97,11 @@ for mg in $metagenomes;do
     binning="${binnings}/${metagenome}.archaea.binning."
     sed -i "s,archaea\.binning\.,${binning},g" ${makeflow}
     # BACTERIA UNCLUSTERED RECRUITMENT
-    binning="${binnings}/${metagenome}.bacteria.binning."
-    sed -i "s,bacteria\.binning\.,${binning},g" ${makeflow}
+    recruitment="${binnings}/${metagenome}.bacteria.recruitment."
+    sed -i "s,bacteria.unclustered_recruitment\.,${binning},g" ${makeflow}
     # ARCHAEA UNCLUSTERED RECRUITMENT
-    binning="${binnings}/${metagenome}.archaea.binning."
-    sed -i "s,archaea\.binning\.,${binning},g" ${makeflow}
+    recruitment="${binnings}/${metagenome}.archaea.recruitment."
+    sed -i "s,archaea.unclustered_recruitment\.,${recruitment},g" ${makeflow}
 
 
     summarylog="${logs}/${metagenome}.summary.log"

@@ -13,4 +13,4 @@ export PATH="$PATH:$HOME/marine_drugs/marine_drugs/src/features/"
 outdir="$HOME/marine_drugs/marine_drugs/data/interim/assemblies"
 metagenomes=`ls ${outdir}/*.fna`
 
-stat_metagenome.py --write-base-stats=${outdir} ${metagenomes[@]} "${outdir}/filtered_assemblies_stats.tsv"
+stat_metagenome.py ${metagenomes[@]} "${outdir}/filtered_assemblies_stats.tsv"

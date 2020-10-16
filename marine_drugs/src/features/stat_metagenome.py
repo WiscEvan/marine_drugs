@@ -176,13 +176,13 @@ if __name__ == "__main__":
         "--write-base-stats",
         help="Write base statistics for each contig in metagenome to provided directory. (File naming will follow assembly.stats.tsv)",
     )
-
     args = parser.parse_args()
     if not os.path.exists(args.out):
         if len(args.assembly) > 1:
             df = pool_stats(args.assembly)
         else:
-            df = pd.DataFrame([assembly_statter(args.assembly)])
+            assembly = args.assembly[0]
+            df = pd.DataFrame([assembly_statter(assembly)])
         df.to_csv(args.out, sep="\t", index=False, header=True)
         logger.info(f"Wrote stats of {df.shape[0]} sponges to {args.out}")
     else:
@@ -197,5 +197,6 @@ if __name__ == "__main__":
                 assemblies=args.assembly, outdir=args.write_base_stats
             )
         else:
+            assembly = args.assembly[0]
             arg = (args.assembly, args.write_base_stats)
             filepaths = [base_statter(arg)]

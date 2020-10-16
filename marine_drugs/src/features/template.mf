@@ -7,18 +7,19 @@ MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
 TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
 BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
 RECRUITMENT=/home/evan/miniconda3/envs/autometa/bin/autometa-unclustered-recruitment
+BLASTP=/home/evan/tools/programs_3rd_party/diamond
 
-# archaea.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv taxonomy.tsv
-#     $(RECRUITMENT) kmers.norm.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv archaea.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+archaea.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv taxonomy.tsv
+    $(RECRUITMENT) kmers.norm.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv archaea.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
 
-# bacteria.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv taxonomy.tsv
-#     $(RECRUITMENT) kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+bacteria.unclustered_recruitment.tsv : kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv taxonomy.tsv
+    $(RECRUITMENT) kmers.norm.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
 
-# archaea.binning.tsv : kmers.norm.tsv coverages.tsv archaea.markers.tsv  kmers.embedded.tsv taxonomy.tsv
-#     $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
+archaea.binning.tsv : kmers.norm.tsv coverages.tsv archaea.markers.tsv  kmers.embedded.tsv taxonomy.tsv
+    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
 
-# bacteria.binning.tsv : kmers.norm.tsv coverages.tsv bacteria.markers.tsv  kmers.embedded.tsv taxonomy.tsv
-#    $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
+bacteria.binning.tsv : kmers.norm.tsv coverages.tsv bacteria.markers.tsv  kmers.embedded.tsv taxonomy.tsv
+   $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.embedded.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
 
 bacteria.markers.tsv : orfs.faa
     $(MARKERS) --orfs orfs.faa --kingdom bacteria --hmmscan bacteria.hmmscan.tsv --out bacteria.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
@@ -26,11 +27,14 @@ bacteria.markers.tsv : orfs.faa
 archaea.markers.tsv : orfs.faa
     $(MARKERS) --orfs orfs.faa --kingdom archaea --hmmscan archaea.hmmscan.tsv --out archaea.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
 
-# taxonomy.tsv orfs.faa : metagenome.filtered.fna
-#     $(TAXONOMY) --assembly metagenome.filtered.fna --nucl_orfs orfs.fna --prot_orfs orfs.faa --blast orfs.blastp.tsv --taxon-method majority_vote taxonomy.tsv outdir
+taxonomy.tsv orfs.faa : metagenome.filtered.fna orfs.fna orfs.faa blastp.tsv
+    $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl_orfs orfs.fna --prot_orfs orfs.faa --blast blastp.tsv --hits hits.pkl.gz --lca lca.tsv --taxon-method majority_vote taxonomy.tsv outdir
 
-orfs.faa : metagenome.filtered.fna
-    $(ORFS) -a orfs.faa -i metagenome.filtered.fna -d orfs.fna -p meta
+blastp.tsv : orfs.faa /mnt/autometa_databases/nr.dmnd
+    $(BLASTP) blastp --query orfs.faa --out blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 40
+
+orfs.faa orfs.fna : metagenome.filtered.fna
+    $(ORFS) -i metagenome.filtered.fna -a orfs.faa -d orfs.fna -p meta
 
 kmers.tsv kmers.norm.tsv kmers.embedded.tsv : metagenome.filtered.fna
     $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.norm.tsv --embedded kmers.embedded.tsv --size 5 --norm-method am_clr --do-pca --pca-dimensions 50 --embed-dimensions 2 --embed-method bhsne

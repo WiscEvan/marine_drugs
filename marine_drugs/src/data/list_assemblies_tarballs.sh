@@ -7,6 +7,6 @@ tar -tf /media/external2/Sponge_assemblies/FL2015_30_Spades_output.tar.gz > "${o
 tar -tf /media/external2/Sponge_assemblies/FL2015_34_Spades_output.tar.gz > "${outdir}/FL2015_34_Spades_output_tarball_listing.txt"
 tar -tf /media/external2/Sponge_assemblies/FL2015_37_Spades_output.tar.gz > "${outdir}/FL2015_37_Spades_output_tarball_listing.txt"
 tar -tf /media/external2/Sponge_assemblies/FL2015_42_Spades_output.tar.gz > "${outdir}/FL2015_42_Spades_output_tarball_listing.txt"
-tar -tf /media/external2/Sponge_assemblies/FL2015_44_Spades_output.tar.gz > "${outdir}/FL2015_44_Spades_output_tarball_listing.txt"
+# tar -tf /media/external2/Sponge_assemblies/FL2015_44_Spades_output.tar.gz > "${outdir}/FL2015_44_Spades_output_tarball_listing.txt" This is a failed assembly
 tar -tf /media/external2/Sponge_assemblies/FL2015_4_Spades_output.tar.gz > "${outdir}/FL2015_4_Spades_output_tarball_listing.txt"
 tar -tf /media/external2/Sponge_assemblies/FL2015_8_Spades_output.tar.gz > "${outdir}/FL2015_8_Spades_output_tarball_listing.txt"
