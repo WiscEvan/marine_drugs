@@ -12,25 +12,31 @@ BLASTP=/home/evan/tools/programs_3rd_party/diamond
 
 CATEGORY="recruitment"
 
-archaea.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv taxonomy.tsv
-    $(RECRUITMENT) kmers.am_clr.tsv coverages.tsv archaea.binning.tsv archaea.markers.tsv archaea.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+archaea.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv archaea.binning.dbscan.tsv archaea.markers.tsv taxonomy.tsv
+    $(RECRUITMENT) kmers.am_clr.tsv coverages.tsv archaea.binning.dbscan.tsv archaea.markers.tsv archaea.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
 
-bacteria.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv taxonomy.tsv
-    $(RECRUITMENT) kmers.am_clr.tsv coverages.tsv bacteria.binning.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+bacteria.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv bacteria.binning.dbscan.tsv bacteria.markers.tsv taxonomy.tsv
+    $(RECRUITMENT) kmers.am_clr.tsv coverages.tsv bacteria.binning.dbscan.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
 
 CATEGORY="binning"
 
-archaea.binning.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
-    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv archaea.binning.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
+archaea.binning.dbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv archaea.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
 
-bacteria.binning.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
-   $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
+bacteria.binning.dbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+   $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
+
+archaea.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv archaea.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain archaea
+
+bacteria.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+   $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain bacteria
 
 CATEGORY="blastp"
-CORES=30
+CORES=20
 
 blastp.tsv : orfs.faa /mnt/autometa_databases/nr.dmnd
-    $(BLASTP) blastp --query orfs.faa --out blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 30
+    $(BLASTP) blastp --query orfs.faa --out blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 20
 
 CATEGORY="markers"
 
@@ -73,7 +79,7 @@ kmers.tsv : metagenome.filtered.fna
 CATEGORY="taxonomy-assignment"
 
 taxonomy.tsv : metagenome.filtered.fna orfs.fna orfs.faa blastp.tsv
-    $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl_orfs orfs.fna --prot_orfs orfs.faa --blast blastp.tsv --hits hits.pkl.gz --lca lca.tsv --taxon-method majority_vote taxonomy.tsv outdir
+    $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl-orfs orfs.fna --prot-orfs orfs.faa --blast blastp.tsv --hits hits.pkl.gz --lca lca.tsv --method majority_vote taxonomy.tsv
 
 CATEGORY="coverage"
 
