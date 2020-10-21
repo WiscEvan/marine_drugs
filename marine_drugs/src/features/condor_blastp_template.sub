@@ -1,0 +1,18 @@
+
+job = sample
+universe = vanilla
+log = $(job)_$(Cluster).log
+executable = sample.sh
+#arguments = $(Process)
+output = logs/$(job)_$(Cluster)_$(Process).out
+error = logs/$(job)_$(Cluster)_$(Process).err
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+# NOTE: You will need the diamond executable available to transfer to the execute node.
+transfer_input_files = orfs.faa, diamond
+request_cpus = 16
+request_memory = 200GB
+request_disk = 500GB
++LongJob = true
+Requirements = (Target.HasCHTCStaging == true)
+queue 1
