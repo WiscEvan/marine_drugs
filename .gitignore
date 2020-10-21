@@ -18,3 +18,7 @@ marine_drugs/src/features/*failed*
 marine_drugs/src/features/resource_*
 marine_drugs/src/features/slurm*
 marine_drugs/src/data/logs/
+
+#condor requirements and generated logs
+marine_drugs/src/features/*.log
+marine_drugs/src/features/diamond
