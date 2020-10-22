@@ -7,7 +7,6 @@ MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
 TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
 BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
 RECRUITMENT=/home/evan/miniconda3/envs/autometa/bin/autometa-unclustered-recruitment
-BLASTP=/home/evan/tools/programs_3rd_party/diamond
 
 
 CATEGORY="recruitment"
@@ -31,12 +30,6 @@ CATEGORY="binning"
 
 /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.bacteria.binning.hdbscan.tsv : /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.kmers.am_clr.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.coverages.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.bacteria.markers.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.kmers.am_clr.bhsne.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.taxonomy.tsv
    $(BINNING) /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.kmers.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.coverages.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.bacteria.markers.tsv /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.bacteria.binning.hdbscan.tsv --embedded-kmers /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.kmers.am_clr.bhsne.tsv --taxonomy /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.taxonomy.tsv --clustering-method hdbscan --domain bacteria
-
-CATEGORY="blastp"
-CORES=20
-
-/home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.blastp.tsv : /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa /mnt/autometa_databases/nr.dmnd
-    $(BLASTP) blastp --query /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa --out /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 20
 
 CATEGORY="markers"
 
