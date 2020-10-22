@@ -7,7 +7,6 @@ MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
 TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
 BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
 RECRUITMENT=/home/evan/miniconda3/envs/autometa/bin/autometa-unclustered-recruitment
-BLASTP=/home/evan/tools/programs_3rd_party/diamond
 
 
 CATEGORY="recruitment"
@@ -31,12 +30,6 @@ archaea.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv
 
 bacteria.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
    $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain bacteria
-
-CATEGORY="blastp"
-CORES=20
-
-blastp.tsv : orfs.faa /mnt/autometa_databases/nr.dmnd
-    $(BLASTP) blastp --query orfs.faa --out blastp.tsv --db /mnt/autometa_databases/nr.dmnd --evalue 1e-5 --max-target-seqs 200 --outfmt 6 --threads 20
 
 CATEGORY="markers"
 

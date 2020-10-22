@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 
-# First requires install autometa...
+# First requires install of autometa...
 # Can do by cloning and installing manually or through conda.
-# If manually installing Autometa, you will also need to install env. 
+# If manually installing Autometa, you will also need to install env.
 
 email="erees@wisc.edu"
 
@@ -112,7 +112,7 @@ EOM
     # Notice we are redirecting slurm stderr and stdout to a logs directory...
     #  You will need to make this directory if it does not exists where you are submitting
     slurm_stderr="#SBATCH --error=logs/%J.run_${metagenome}_makeflow.err"
-    slurm_stdout="#SBATCH --output=logs/%J.run_${metagenome}_makeflow.err"
+    slurm_stdout="#SBATCH --output=logs/%J.run_${metagenome}_makeflow.out"
     echo $slurm_stderr >> $sponge_batch
     echo $slurm_stdout >> $sponge_batch
     cat >> $sponge_batch <<- EOM
