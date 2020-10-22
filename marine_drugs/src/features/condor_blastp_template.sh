@@ -10,7 +10,7 @@ cp /staging/groups/kwan_group/nr.dmnd ./
     --evalue 1e-5 \
     --max-target-seqs 200 \
     --outfmt 6 \
-    --threads 16
+    --threads 16 \
     --memory-limit 100
 
 #
