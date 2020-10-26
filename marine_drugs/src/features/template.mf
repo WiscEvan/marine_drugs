@@ -2,7 +2,7 @@
 LENGTH_FILTER=/home/evan/miniconda3/envs/autometa/bin/autometa-length-filter
 COVERAGES=/home/evan/miniconda3/envs/autometa/bin/autometa-coverage
 KMERS=/home/evan/miniconda3/envs/autometa/bin/autometa-kmers
-ORFS=/home/evan/tools/programs_3rd_party/prokka/binaries/linux/prodigal
+ORFS=/home/evan/miniconda3/envs/autometa/bin/autometa-orfs
 MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
 TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
 BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
@@ -80,14 +80,10 @@ coverages.tsv : metagenome.filtered.fna
     $(COVERAGES) --from-spades --assembly metagenome.filtered.fna --out coverages.tsv
 
 CATEGORY="orf-calling"
-# CORES=5
+CORES=5
 
 orfs.faa orfs.fna : metagenome.filtered.fna
-    $(ORFS) -i metagenome.filtered.fna -a orfs.faa -d orfs.fna -p meta
-
-# TODO: Replace with autometa-call-orfs entrypoint
-# orfs.faa orfs.fna : metagenome.filtered.fna
-#    $(ORFS) -i metagenome.filtered.fna --prots orfs.faa --nucls orfs.fna --cpus=5
+   $(ORFS) --parallel --cpus 5 metagenome.filtered.fna orfs.fna orfs.faa
 
 CATEGORY="length-filter"
 

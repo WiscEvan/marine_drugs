@@ -2,10 +2,14 @@
 # /home/evan/marine_drugs/marine_drugs/src/make_sponge_makeflows.sh
 
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2014_3_makeflow.sh
+sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2014_9_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_30_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_34_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_37_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_42_makeflow.sh
+sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_43_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_44_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_4_makeflow.sh
+sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_5_makeflow.sh
 sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_8_makeflow.sh
+sbatch /home/evan/marine_drugs/marine_drugs/src/features/run_FL2015_9_makeflow.sh

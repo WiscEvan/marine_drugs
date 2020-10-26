@@ -2,7 +2,7 @@
 LENGTH_FILTER=/home/evan/miniconda3/envs/autometa/bin/autometa-length-filter
 COVERAGES=/home/evan/miniconda3/envs/autometa/bin/autometa-coverage
 KMERS=/home/evan/miniconda3/envs/autometa/bin/autometa-kmers
-ORFS=/home/evan/tools/programs_3rd_party/prokka/binaries/linux/prodigal
+ORFS=/home/evan/miniconda3/envs/autometa/bin/autometa-orfs
 MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
 TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
 BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
@@ -80,14 +80,10 @@ CATEGORY="coverage"
     $(COVERAGES) --from-spades --assembly /home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_42.filtered.fna --out /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.coverages.tsv
 
 CATEGORY="orf-calling"
-# CORES=5
+CORES=5
 
 /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.fna : /home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_42.filtered.fna
-    $(ORFS) -i /home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_42.filtered.fna -a /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa -d /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.fna -p meta
-
-# TODO: Replace with autometa-call-orfs entrypoint
-# /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.fna : /home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_42.filtered.fna
-#    $(ORFS) -i /home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_42.filtered.fna --prots /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa --nucls /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.fna --cpus=5
+   $(ORFS) --parallel --cpus 5 /home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_42.filtered.fna /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.fna /home/evan/marine_drugs/marine_drugs/data/interim/binning/FL2015_42.orfs.faa
 
 CATEGORY="length-filter"
 
