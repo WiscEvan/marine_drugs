@@ -1,0 +1,9 @@
+MK105443.1 Neopetrosia proxima voucher UF 3856 cytochrome oxidase subunit 1 (COI) gene, partial cds; mitochondrial
+MK105444.1 Neopetrosia proxima voucher UF 3858 cytochrome oxidase subunit 1 (COI) gene, partial cds; mitochondrial
+MK105445.1 Neopetrosia proxima voucher UF 3860 cytochrome oxidase subunit 1 (COI) gene, partial cds; mitochondrial
+JX306085.1 Ircinia felix voucher BA10-21 cytochrome oxidase subunit I (COI) gene, partial cds; mitochondrial
+JX306086.1 Ircinia felix voucher BA10-17 cytochrome oxidase subunit I (COI) gene, partial cds; mitochondrial
+MH749402.1 UNVERIFIED: Spheciospongia vesparium voucher FK2012-030-092 cytochrome oxidase I subunit-like (COI) gene, partial sequence; mitochondrial
+AJ704977.1 Tedania ignis partial mitochondrial coi gene for cytochrome oxidase subunit I, allele 2
+AJ704976.1 Tedania ignis partial mitochondrial coi gene for cytochrome oxidase subunit I, allele 1
+YP_001648644.1 hippospongia lachne cytochrome c oxidase subunit I 2967:4571 forward (extracted using ARTEMIS from hippospongia_lachne_mtdna.gbk)
