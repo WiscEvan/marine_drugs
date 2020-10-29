@@ -20,16 +20,16 @@ bacteria.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv bacteria.b
 CATEGORY="binning"
 
 archaea.binning.dbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
-    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv archaea.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
+    $(BINNING) kmers.am_clr.tsv coverages.tsv archaea.markers.tsv archaea.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
 
 bacteria.binning.dbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
-   $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
+   $(BINNING) kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
 
 archaea.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
-    $(BINNING) kmers.tsv coverages.tsv archaea.markers.tsv archaea.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain archaea
+    $(BINNING) kmers.am_clr.tsv coverages.tsv archaea.markers.tsv archaea.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain archaea
 
 bacteria.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
-   $(BINNING) kmers.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain bacteria
+   $(BINNING) kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain bacteria
 
 CATEGORY="markers"
 
