@@ -13,3 +13,4 @@ scikit-learn
 scikit-bio
 tsne
 umap-learn
+bandage
