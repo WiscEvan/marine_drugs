@@ -9,6 +9,7 @@ marine_drugs/data/raw/assemblies/*.stats.tsv
 # Bulky Data
 marine_drugs/data/interim/assemblies/*.fna
 marine_drugs/data/interim/binning/
+marine_drugs/data/
 
 #slurm and makeflow generated files
 marine_drugs/src/features/*.err
