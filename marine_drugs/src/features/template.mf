@@ -64,7 +64,7 @@ kmers.am_clr.tsv : metagenome.filtered.fna kmers.tsv
     $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.am_clr.tsv --norm-method am_clr --size 5
 
 CATEGORY="kmer-counting"
-CORES=10
+# CORES=10
 
 kmers.tsv : metagenome.filtered.fna
     $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --multiprocess --cpus 10
@@ -72,7 +72,7 @@ kmers.tsv : metagenome.filtered.fna
 CATEGORY="taxonomy-assignment"
 
 taxonomy.tsv : metagenome.filtered.fna orfs.fna orfs.faa blastp.tsv
-    $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl-orfs orfs.fna --prot-orfs orfs.faa --blast blastp.tsv --hits hits.pkl.gz --lca lca.tsv --method majority_vote taxonomy.tsv
+    $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl-orfs orfs.fna --prot-orfs orfs.faa --blast blastp.tsv --lca lca.tsv --method majority_vote taxonomy.tsv
 
 CATEGORY="coverage"
 
@@ -80,7 +80,7 @@ coverages.tsv : metagenome.filtered.fna
     $(COVERAGES) --from-spades --assembly metagenome.filtered.fna --out coverages.tsv
 
 CATEGORY="orf-calling"
-CORES=5
+# CORES=5
 
 orfs.faa orfs.fna : metagenome.filtered.fna
    $(ORFS) --parallel --cpus 5 metagenome.filtered.fna orfs.fna orfs.faa
