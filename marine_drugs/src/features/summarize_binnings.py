@@ -40,7 +40,6 @@ def main():
                 }
             )
         clusters_df = pd.DataFrame(clusters)
-        n_bins = clusters_df.shape[0]
         samples.append(
             {
                 "sample": sample,

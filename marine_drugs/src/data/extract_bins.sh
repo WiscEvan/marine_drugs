@@ -12,19 +12,15 @@ fastas="$HOME/marine_drugs/marine_drugs/data/interim/assemblies"
 binning_dir="$HOME/marine_drugs/marine_drugs/data/interim/binning"
 outdir="$HOME/marine_drugs/marine_drugs/data/processed/bins"
 src="/home/evan/marine_drugs/marine_drugs/src/data"
-
-# ls *.binning.{umap,bhsne}.tsv
-embed_methods=("bhsne" "umap")
+binning_filepaths="${binning_dir}/final_binning_filepaths.tsv"
 
 for fasta in `ls ${fastas}/*.filtered.fna`;do
     # Example fasta name: FL2015_30.filtered.fna
     sponge=$(basename ${fasta/.filtered.fna/})
-    for embed_method in ${embed_methods[@]};do
-        binning="${binning_dir}/${sponge}.bacteria.binning.${embed_method}.tsv"
-        bin_outdir="${outdir}/${embed_method}/${sponge}"
-        if [ -f $binning ]
-        then python "${src}/extract_bins.py" --binning $binning --fasta $fasta --outdir $bin_outdir
-        else echo "${binning} does not exists. Skipping..."
-        fi
-    done
+    binning=`grep "${sponge}\." $binning_filepaths | cut -f2`
+    bin_outdir="${outdir}/${sponge}"
+    if [ -f $binning ]
+    then python "${src}/extract_bins.py" --use-latest-refinement --binning $binning --fasta $fasta --outdir $bin_outdir
+    else echo "${binning} does not exists. Skipping..."
+    fi
 done
