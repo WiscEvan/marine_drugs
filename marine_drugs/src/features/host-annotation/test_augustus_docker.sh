@@ -1,0 +1,1 @@
+docker run --volume ~/marine_drugs/marine_drugs/data/interim/host-assembly/fastas/FL2015_37/:/input/:ro --volume ~/marine_drugs/marine_drugs/data/interim/host-assembly/gene-calling/:/output:rw --user=$(id -u):$(id -g) --rm -it --detach=false augustus
