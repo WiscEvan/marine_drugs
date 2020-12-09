@@ -25,6 +25,15 @@ for sponge in ${sponges[@]};do
     then echo "could not find $fasta. skipping..."
     else
         output="$HOME/marine_drugs/marine_drugs/data/interim/bgcs/${sponge}"
-        $ANTISMASH $fasta $output --genefinding-tool prodigal-m --fullhmmer --cf-create-clusters --clusterhmmer --cb-general --cb-subclusters --cb-knownclusters --pfam2go --cpus $cpus
+        $ANTISMASH $fasta $output \
+            --genefinding-tool prodigal-m \
+            --fullhmmer \
+            --cf-create-clusters \
+            --clusterhmmer \
+            --cb-general \
+            --cb-subclusters \
+            --cb-knownclusters \
+            --pfam2go \
+            --cpus $cpus
     fi
 done
