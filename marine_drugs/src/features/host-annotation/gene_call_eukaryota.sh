@@ -8,7 +8,7 @@
 #SBATCH --output=logs/%J.augustus_gene_calling.out
 
 EUKARYA="/home/evan/marine_drugs/marine_drugs/data/interim/host-assembly/fastas"
-OUTDIR="/home/evan/marine_drugs/marine_drugs/data/interim/host-assembly/gene-calling"
+OUTDIR="/home/evan/marine_drugs/marine_drugs/data/interim/host-annotation/gene-calling"
 # species identifier for amphimedon queenslandica
 SPECIES="amphimedon"
 
