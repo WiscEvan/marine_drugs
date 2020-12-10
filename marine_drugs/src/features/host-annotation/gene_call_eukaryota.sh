@@ -7,8 +7,6 @@
 #SBATCH --error=logs/%J.augustus_gene_calling.err
 #SBATCH --output=logs/%J.augustus_gene_calling.out
 
-AUGUSTUS="$HOME/bin/run_augustus"
-
 EUKARYA="/home/evan/marine_drugs/marine_drugs/data/interim/host-assembly/fastas"
 OUTDIR="/home/evan/marine_drugs/marine_drugs/data/interim/host-assembly/gene-calling"
 # species identifier for amphimedon queenslandica
@@ -17,16 +15,16 @@ SPECIES="amphimedon"
 for eukaryota in `find $EUKARYA -name "eukaryota.fna"`;do
     INDIR=$(dirname $eukaryota)
     sponge=$(basename $(dirname $eukaryota))
-    augustus_stdout="$OUTDIR/${sponge}.stdout.txt"
-    if [ ! -f $augustus_stdout ]
+    output="${OUTDIR}/${sponge}.abinitio.txt"
+    if [ ! -f $output ]
     then docker run \
         --volume $INDIR:/input:ro \
         --user=$(id -u):$(id -g) \
         --rm \
         --detach=false \
         augustus:latest \
-            augustus --species=$SPECIES --sample=${sponge} --genemodel=partial /input/eukaryota.fna 1> "${OUTDIR}/${sponge}.stdout.txt" 2> "${OUTDIR}/${sponge}.stderr.txt"
-    else echo "${augustus_stdout} already exists. skipping..."
+            augustus --species=$SPECIES --sample=${sponge} --genemodel=partial /input/eukaryota.fna > $output
+    else echo "${output} already exists. skipping..."
     fi
     
     # Aligned.sortedByCoord.out.bam written by STAR
