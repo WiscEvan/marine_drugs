@@ -4,8 +4,8 @@
 #SBATCH -N 1 # Nodes
 #SBATCH -n 1 # Tasks
 #SBATCH --cpus-per-task=1
-#SBATCH --error=logs/%J.antismash_FL2015_42.err
-#SBATCH --output=logs/%J.antismash_FL2015_42.out
+#SBATCH --error=logs/%J.antismash_sample.err
+#SBATCH --output=logs/%J.antismash_sample.out
 
 # https://phdops.kblin.org/2015-running-antismash-standalone-from-docker.html
 ANTISMASH="/home/evan/bin/run_antismash"
@@ -13,7 +13,7 @@ ANTISMASH="/home/evan/bin/run_antismash"
 
 cpus=35
 assemblies="$HOME/marine_drugs/marine_drugs/data/raw/assemblies"
-sponge="FL2015_42"
+sponge="sample"
 fasta="${assemblies}/${sponge}.fasta"
 if [ ! -f $fasta ]
 then echo "could not find $fasta. skipping..."
