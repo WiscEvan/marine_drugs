@@ -18,28 +18,28 @@ fi
 # Ab initio output directory
 cpu=50
 
-for assembly in `ls ${EUKARYA}/*/eukaryota.fna`;do
-    workdir=$(dirname $assembly)
-    sample=$(basename $workdir)
-    # Search all eukaryota
-    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-        ezlabgva/busco:v5.beta.1_cv1 \
-        busco -m genome \
-            --auto-lineage-euk \
-            --in /busco_wd/eukaryota.fna \
-            --out ${sample}_busco_genome_auto_lineage_euk \
-            --cpu $cpu
-    mv ${workdir}/${sample}_busco_genome_auto_lineage_euk ${OUTDIR}/.
-    # Now search all metazoans
-    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-        ezlabgva/busco:v5.beta.1_cv1 \
-        busco -m genome \
-            --lineage_dataset metazoa_odb10 \
-            --in /busco_wd/eukaryota.fna \
-            --out ${sample}_busco_genome_metazoa_odb10 \
-            --cpu $cpu
-    mv ${workdir}/${sample}_busco_genome_metazoa_odb10 ${OUTDIR}/.
-done
+# for assembly in `ls ${EUKARYA}/*/eukaryota.fna`;do
+#     workdir=$(dirname $assembly)
+#     sample=$(basename $workdir)
+#     # Search all eukaryota
+#     docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+#         ezlabgva/busco:v5.beta.1_cv1 \
+#         busco -m genome \
+#             --auto-lineage-euk \
+#             --in /busco_wd/eukaryota.fna \
+#             --out ${sample}_busco_genome_auto_lineage_euk \
+#             --cpu $cpu
+#     mv ${workdir}/${sample}_busco_genome_auto_lineage_euk ${OUTDIR}/.
+#     # Now search all metazoans
+#     docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+#         ezlabgva/busco:v5.beta.1_cv1 \
+#         busco -m genome \
+#             --lineage_dataset metazoa_odb10 \
+#             --in /busco_wd/eukaryota.fna \
+#             --out ${sample}_busco_genome_metazoa_odb10 \
+#             --cpu $cpu
+#     mv ${workdir}/${sample}_busco_genome_metazoa_odb10 ${OUTDIR}/.
+# done
 
 
 # Retrieve positive control from NCBI
@@ -62,7 +62,7 @@ done
 # Now perform search on positive control (amphimedon queenslandica NCBI genome)
 # full path to genome: "${HOME}/marine_drugs/marine_drugs/data/external/GCF_000090795.1_v1.0_genomic.fna"
 workdir="${HOME}/marine_drugs/marine_drugs/data/external"
-controls=("GCF_000090795.1_v1.0_genomic.fna" "GCA_016292275.1_UQ_AmQuee_3_genomic.fna" "GCA_900275565.1_Aplysina16A_polished_assembly_genomic" "GCA_900275575.1_Aplysina21_polished_assembly_genomic" "GCA_013339895.1_Emu_genome_v1_genomic.fna")
+controls=("GCF_000090795.1_v1.0_genomic.fna" "GCA_016292275.1_UQ_AmQuee_3_genomic.fna" "GCA_900275565.1_Aplysina16A_polished_assembly_genomic.fna" "GCA_900275575.1_Aplysina21_polished_assembly_genomic.fna" "GCA_013339895.1_Emu_genome_v1_genomic.fna")
 for control in ${controls[@]};do
     docker run --rm -u $(id -u) -v $workdir:/busco_wd \
             ezlabgva/busco:v5.beta.1_cv1 \
