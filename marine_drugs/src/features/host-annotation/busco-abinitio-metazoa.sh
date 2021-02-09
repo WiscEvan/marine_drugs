@@ -9,8 +9,14 @@
 
 # Path to directories containing eukaryota.fna fasta files.
 EUKARYA="$HOME/marine_drugs/marine_drugs/data/interim/host-assembly/fastas"
+OUTDIR="$HOME/marine_drugs/marine_drugs/data/interim/host-annotation/genome-marker-assessment"
+if [ -d $OUTDIR ];
+then 
+    mkdir -p $OUTDIR
+    echo "Created ${OUTDIR}"
+fi
 # Ab initio output directory
-cpu=30
+cpu=50
 
 for assembly in `ls ${EUKARYA}/*/eukaryota.fna`;do
     workdir=$(dirname $assembly)
@@ -23,6 +29,7 @@ for assembly in `ls ${EUKARYA}/*/eukaryota.fna`;do
             --in /busco_wd/eukaryota.fna \
             --out ${sample}_busco_genome_auto_lineage_euk \
             --cpu $cpu
+    mv ${workdir}/${sample}_busco_genome_auto_lineage_euk ${OUTDIR}/.
     # Now search all metazoans
     docker run --rm -u $(id -u) -v $workdir:/busco_wd \
         ezlabgva/busco:v5.beta.1_cv1 \
@@ -31,6 +38,7 @@ for assembly in `ls ${EUKARYA}/*/eukaryota.fna`;do
             --in /busco_wd/eukaryota.fna \
             --out ${sample}_busco_genome_metazoa_odb10 \
             --cpu $cpu
+    mv ${workdir}/${sample}_busco_genome_metazoa_odb10 ${OUTDIR}/.
 done
 
 
@@ -39,22 +47,30 @@ done
 # wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/090/795/GCF_000090795.1_v1.0/GCF_000090795.1_v1.0_genomic.fna.gz
 # gzip -d GCF_000090795.1_v1.0_genomic.fna.gz
 
+# wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/016/292/275/GCA_016292275.1_UQ_AmQuee_3/GCA_016292275.1_UQ_AmQuee_3_genomic.fna.gz
+# gzip -d GCA_016292275.1_UQ_AmQuee_3_genomic.fna.gz
+
+
 # Now perform search on positive control (amphimedon queenslandica NCBI genome)
 # full path to genome: "${HOME}/marine_drugs/marine_drugs/data/external/GCF_000090795.1_v1.0_genomic.fna"
-amphimedon_queenslandica="GCF_000090795.1_v1.0_genomic.fna"
 workdir="${HOME}/marine_drugs/marine_drugs/data/external"
-docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-        ezlabgva/busco:v5.beta.1_cv1 \
-        busco -m genome \
-            --lineage_dataset metazoa_odb10 \
-            --in /busco_wd/${amphimedon_queenslandica} \
-            --out amphimedon_queenslandica_busco_genome_metazoa_odb10 \
-            --cpu $cpu
-# Search all eukaryota
-docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-        ezlabgva/busco:v5.beta.1_cv1 \
-        busco -m genome \
-            --auto-lineage-euk \
-            --in /busco_wd/${amphimedon_queenslandica} \
-            --out amphimedon_queenslandica_busco_genome_auto_lineage_euk \
-            --cpu $cpu
+controls=("GCF_000090795.1_v1.0_genomic.fna" "GCA_016292275.1_UQ_AmQuee_3_genomic.fna")
+for control in ${controls[@]};do
+    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+            ezlabgva/busco:v5.beta.1_cv1 \
+            busco -m genome \
+                --lineage_dataset metazoa_odb10 \
+                --in /busco_wd/$control \
+                --out ${control/.fna/}_busco_genome_metazoa_odb10 \
+                --cpu $cpu
+    mv ${workdir}/${control/.fna/}_busco_genome_metazoa_odb10 ${OUTDIR}/.
+    # Search all eukaryota
+    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+            ezlabgva/busco:v5.beta.1_cv1 \
+            busco -m genome \
+                --auto-lineage-euk \
+                --in /busco_wd/$control \
+                --out ${control/.fna/}_busco_genome_auto_lineage_euk \
+                --cpu $cpu
+    mv ${workdir}/${control/.fna/}_busco_genome_auto_lineage_euk ${OUTDIR}/.
+done
