@@ -105,7 +105,7 @@ process retrieve_hints {
             --pri=4 \
             --strand="." > hints.exons.gff
     cat "${SPONGE_ALN_DIR}/${intron_hints_filename}" $ep_hints > $HINTS
-      """
+    """
 }
 
 process predict_genes_with_hints {

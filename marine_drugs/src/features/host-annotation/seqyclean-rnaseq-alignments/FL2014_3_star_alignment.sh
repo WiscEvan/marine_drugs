@@ -37,7 +37,7 @@ STAR \
 STAR \
     --runThreadN $threads \
     --genomeDir $genomeDir \
-	--outFileNamePrefix "${genomeDir}/${sponge}_" \
+    --outFileNamePrefix "${genomeDir}/${sponge}_" \
     --readFilesIn $fwd_reads $rev_reads \
     --readFilesCommand zcat \
     --alignIntronMax 100000 \
