@@ -37,7 +37,7 @@ EUKARYA="$HOME/marine_drugs/marine_drugs/data/interim/host-assembly/fastas"
 # Ab initio output directory
 OUTDIR="$HOME/marine_drugs/marine_drugs/data/interim/host-annotation/gene-calling"
 # STAR Alignments directory
-ALNDIR="$HOME/marine_drugs/marine_drugs/data/interim/host-annotation/star-alignments/seqycleaned-rnaseq/"
+ALNDIR="$HOME/marine_drugs/marine_drugs/data/interim/host-annotation/star-alignments/seqycleaned-rnaseq"
 # species identifier for amphimedon queenslandica
 SPECIES="amphimedon"
 
@@ -53,39 +53,47 @@ for eukaryota in `find $EUKARYA -name "eukaryota.fna"`;do
     # Signal.Unique.str1.out.wig written by STAR
     # Generate hints for the introns.
     SPONGE_ALN_DIR="${ALNDIR}/${sponge}"
-    intron_hints_filename="${sponge}.hints.introns.gff"
+    introns_hints_filename="${sponge}.hints.introns.gff"
 
+    # 2c. Create a directory that contains hints and concatenate
+    HINTS_PRED_DIR="${OUTDIR}/${sponge}"
+    if [ ! -d $HINTS_PRED_DIR ]
+    then mkdir -p $HINTS_PRED_DIR
+    fi
+    
     # 2a. Generate intron hints for Augustus predictions from RNAseq alignments
-    if [ ! -f "${SPONGE_ALN_DIR}/${intron_hints_filename}" ]
+    introns_hints="${HINTS_PRED_DIR}/${introns_hints_filename}"
+    if [ ! -f $introns_hints ]
     then
+        # --in follows convention from STAR parameter --outFileNamePrefix ${genomeDir}/${sponge}_'
         docker run \
             --volume $SPONGE_ALN_DIR:/sample:rw \
             --user=$(id -u):$(id -g) \
             --rm \
             --detach=false \
             augustus:latest \
-                bin/bam2hints --intronsonly --in=/sample/${sponge}_Aligned.sortedByCoord.out.bam --out=/sample/${intron_hints_filename}
-            # --in follows convention from STAR parameter --outFileNamePrefix ${genomeDir}/${sponge}_'
+                bin/bam2hints --intronsonly --in=/sample/${sponge}_Aligned.sortedByCoord.out.bam --out=/sample/${introns_hints_filename}
+        mv "${SPONGE_ALN_DIR}/${introns_hints_filename}" $introns_hints
     else
-        echo "${SPONGE_ALN_DIR}/${intron_hints_filename} exists... skipping bam2hints"
-    fi    
+        echo "${SPONGE_ALN_DIR}/${introns_hints_filename} exists... skipping bam2hints"
+    fi
     # Now generate the exon part hints
     # Note: exon parts are handled differently than 'exons' in Augustus
     # For more information see the extrinsic/extrinsic.cfg file in the Augustus repository
     # So I am specifying 'exonparts' to avoid confusion
-    ep_hints="${SPONGE_ALN_DIR}/${sponge}.hints.exonparts.gff"
+    exonparts_hints="${HINTS_PRED_DIR}/${sponge}.hints.exonparts.gff"
 
     # NOTE: sample name follows convention from STAR parameter --outFileNamePrefix ${genomeDir}/${sponge}_'
     # 2b. Generate exon hints for Augustus predictions from RNAseq alignments
-    if [ ! -f $ep_hints ]
+    if [ ! -f $exonparts_hints ]
     then
+        # NOTE: We must use /bin/bash so we can supply two commands within the container! 
         docker run \
             --volume $SPONGE_ALN_DIR:/sample:rw \
             --user=$(id -u):$(id -g) \
             --rm \
             --detach=false \
-            augustus:latest \
-                cat /sample/${sponge}_Signal.Unique.str1.out.wig \
+            augustus:latest /bin/bash -c "cat /sample/${sponge}_Signal.Unique.str1.out.wig \
                 | \
                 ./scripts/wig2hints.pl \
                     --width=10 \
@@ -97,24 +105,18 @@ for eukaryota in `find $EUKARYA -name "eukaryota.fna"`;do
                     --type=ep \
                     --radius=4.5 \
                     --pri=4 \
-                    --strand="." > $ep_hints
+                    --strand='.'" > $exonparts_hints
     else
-        echo "${ep_hints} exists... skipping wig2hints exonparts generation"
+        echo "${exonparts_hints} exists... skipping wig2hints exonparts generation"
     fi
 
-    # 2c. Create a directory that contains hints and concatenate
-    HINTS_PRED_DIR="${OUTDIR}/${sponge}"
-    if [ ! -d $HINTS_PRED_DIR ]
-    then mkdir -p $HINTS_PRED_DIR
-    fi
     HINTS="${HINTS_PRED_DIR}/${sponge}.hints.gff"
-    cat "${SPONGE_ALN_DIR}/${intron_hints_filename}" $ep_hints > $HINTS
+    cat $introns_hints $exonparts_hints > $HINTS
     if [ ! -f $HINTS ]
     then
         echo "Missing hints file for ${sponge}: hints -> $HINTS"
         continue
     fi
-
     # 3. Perform Augustus predictions with the generated hints.
     HINTS_PREDICTIONS="${OUTDIR}/${sponge}.hints.predictions.gff"
     # AUGUSTUS_CONFIG="$HOME/Augustus/config/extrinsic/extrinsic.M.RM.E.W.cfg"
@@ -142,7 +144,7 @@ for eukaryota in `find $EUKARYA -name "eukaryota.fna"`;do
                     --protein=on \
                     --codingseq=on \
                     --UTR=on \
-                    --hintsfile=/predictions/$HINTS \
+                    --hintsfile=/predictions/${sample}/$(basename $HINTS) \
                     /fasta/eukaryota.fna  > $HINTS_PREDICTIONS
                     # --extrinsicCfgFile=$EXTRINSIC_CONFIG  > $HINTS_PREDICTIONS
     else

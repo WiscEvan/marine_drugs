@@ -66,9 +66,9 @@ def retrieve_annotations(gff):
                 transcript_id = llist[6]
                 seqname = llist[7]
             if "start gene" in line:
-                parsing = True
+                parsing = not parsing
             if "end gene" in line:
-                parsing = False
+                parsing = not parsing
                 break
             
 
