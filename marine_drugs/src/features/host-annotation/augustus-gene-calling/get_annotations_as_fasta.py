@@ -40,11 +40,8 @@ import os
 
 from Bio import SeqIO
 
-def parse_original_fasta(fasta):
-    return [record for record in SeqIO.parse(fasta, "fasta")]
-
-
-def retrieve_annotations(gff):
+def retrieve_annotations(gff, fasta):
+    records = [record for record in SeqIO.parse(fasta, "fasta")]
     parsing = False
     with open(gff) as fh:
         # One line will have 'coding sequence = [...'
@@ -80,7 +77,8 @@ def main():
     parser.add_argument("--fasta")
 
 
-    records = parse_original_fasta
+    records = parse_original_fasta(args.fasta)
+    retrieve_annotations(records, )
 
 
 if __name__ == "__main__":

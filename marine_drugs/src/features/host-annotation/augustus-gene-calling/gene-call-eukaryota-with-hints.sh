@@ -119,8 +119,10 @@ for eukaryota in `find $EUKARYA -name "eukaryota.fna"`;do
     fi
     # 3. Perform Augustus predictions with the generated hints.
     HINTS_PREDICTIONS="${OUTDIR}/${sponge}.hints.predictions.gff"
+    
+    # NOTE: Copy extrinsic from Augusutus path below and write to $EXTRINSIC_CONFIG
     # AUGUSTUS_CONFIG="$HOME/Augustus/config/extrinsic/extrinsic.M.RM.E.W.cfg"
-    # EXTRINSIC_CONFIG="${OUTDIR}/${sponge}.extrinsic.cfg"
+    EXTRINSIC_CONFIG="${OUTDIR}/${sponge}.extrinsic.cfg"
 
     # Augustus dev recommends switching the UTR flag to "on" because
     # RNA-Seq covers UTR as well. 
@@ -138,15 +140,14 @@ for eukaryota in `find $EUKARYA -name "eukaryota.fna"`;do
                 augustus \
                     --species=$SPECIES \
                     --alternatives-from-evidence=true \
-                    --extrinsicCfgFile=extrinsic.cfg \
+                    --extrinsicCfgFile=/predictions/$(basename $EXTRINSIC_CONFIG) \
                     --allow_hinted_splicesites=atac \
                     --softmasking=on \
                     --protein=on \
                     --codingseq=on \
                     --UTR=on \
-                    --hintsfile=/predictions/${sample}/$(basename $HINTS) \
-                    /fasta/eukaryota.fna  > $HINTS_PREDICTIONS
-                    # --extrinsicCfgFile=$EXTRINSIC_CONFIG  > $HINTS_PREDICTIONS
+                    --hintsfile=/predictions/${sponge}/$(basename $HINTS) \
+                    /fasta/eukaryota.fna > $HINTS_PREDICTIONS
     else
         echo "${HINTS_PREDICTIONS} exists... skipping"
     fi
