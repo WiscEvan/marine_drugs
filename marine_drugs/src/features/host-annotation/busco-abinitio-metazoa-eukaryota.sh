@@ -22,14 +22,14 @@ for assembly in `ls ${EUKARYA}/*/eukaryota.fna`;do
     workdir=$(dirname $assembly)
     sample=$(basename $workdir)
     # Search all eukaryota
-    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-        ezlabgva/busco:v5.beta.1_cv1 \
-        busco -m genome \
-            --auto-lineage-euk \
-            --in /busco_wd/eukaryota.fna \
-            --out ${sample}_busco_genome_auto_lineage_euk \
-            --cpu $cpu
-    mv ${workdir}/${sample}_busco_genome_auto_lineage_euk ${OUTDIR}/.
+    # docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+    #     ezlabgva/busco:v5.beta.1_cv1 \
+    #     busco -m genome \
+    #         --auto-lineage-euk \
+    #         --in /busco_wd/eukaryota.fna \
+    #         --out ${sample}_busco_genome_auto_lineage_euk \
+    #         --cpu $cpu
+    # mv ${workdir}/${sample}_busco_genome_auto_lineage_euk ${OUTDIR}/.
     # Now search all metazoans
     docker run --rm -u $(id -u) -v $workdir:/busco_wd \
         ezlabgva/busco:v5.beta.1_cv1 \

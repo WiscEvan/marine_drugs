@@ -23,14 +23,14 @@ for prediction in `ls ${PREDICTIONS_DIR}/*.abinitio.predictions.aa`;do
     proteins=$(basename $prediction)
     sample=${proteins/.hints.predictions.aa/}
     # Search all eukaryota
-    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-        ezlabgva/busco:v5.beta.1_cv1 \
-        busco -m proteins \
-            --auto-lineage-euk \
-            --in /busco_wd/$proteins \
-            --out ${sample}_busco_proteins_auto_lineage_euk \
-            --cpu $cpu
-    mv ${workdir}/${sample}_busco_proteins_auto_lineage_euk ${OUTDIR}/.
+    # docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+    #     ezlabgva/busco:v5.beta.1_cv1 \
+    #     busco -m proteins \
+    #         --auto-lineage-euk \
+    #         --in /busco_wd/$proteins \
+    #         --out ${sample}_busco_proteins_auto_lineage_euk \
+    #         --cpu $cpu
+    # mv ${workdir}/${sample}_busco_proteins_auto_lineage_euk ${OUTDIR}/.
     # Now search all metazoans
     docker run --rm -u $(id -u) -v $workdir:/busco_wd \
         ezlabgva/busco:v5.beta.1_cv1 \

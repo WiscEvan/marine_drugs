@@ -25,7 +25,7 @@
 
 
 # Path to directories containing eukaryota.fna fasta files.
-OUTDIR="$HOME/marine_drugs/marine_drugs/data/interim/host-annotation/genome-marker-assessment"
+OUTDIR="$HOME/marine_drugs/marine_drugs/data/interim/host-annotation/busco-marker-assessment"
 if [ ! -d $OUTDIR ];
 then 
     mkdir -p $OUTDIR
@@ -47,12 +47,12 @@ for control in ${controls[@]};do
                 --cpu $cpu
     mv ${workdir}/${control/.fna/}_busco_genome_metazoa_odb10 ${OUTDIR}/.
     # Search all eukaryota
-    docker run --rm -u $(id -u) -v $workdir:/busco_wd \
-            ezlabgva/busco:v5.beta.1_cv1 \
-            busco -m genome \
-                --auto-lineage-euk \
-                --in /busco_wd/$control \
-                --out ${control/.fna/}_busco_genome_auto_lineage_euk \
-                --cpu $cpu
-    mv ${workdir}/${control/.fna/}_busco_genome_auto_lineage_euk ${OUTDIR}/.
+    # docker run --rm -u $(id -u) -v $workdir:/busco_wd \
+    #         ezlabgva/busco:v5.beta.1_cv1 \
+    #         busco -m genome \
+    #             --auto-lineage-euk \
+    #             --in /busco_wd/$control \
+    #             --out ${control/.fna/}_busco_genome_auto_lineage_euk \
+    #             --cpu $cpu
+    # mv ${workdir}/${control/.fna/}_busco_genome_auto_lineage_euk ${OUTDIR}/.
 done
