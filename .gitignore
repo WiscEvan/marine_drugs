@@ -13,7 +13,7 @@ marine_drugs/data/
 
 #slurm and makeflow generated files
 marine_drugs/src/features/*.err
-marine_drugs/src/features/*.makeflowlog
+marine_drugs/src/**/*.makeflowlog
 marine_drugs/src/features/librmonitor*
 marine_drugs/src/features/*failed*
 marine_drugs/src/features/resource_*
