@@ -17,5 +17,8 @@ for refinement in $refinements;do
     metagenome="${METAGENOMES}/${sponge}.fasta"
     # Now we extract our refined bins to their respective output directory which we'll title by sponge.
     output="${OUTDIR}/${sponge}"
-    python $extract --input $refinement --fasta $metagenome --output $output
+    bin_seq_counts="${output}/bin_sequence_counts.tsv"
+    # echo "$sponge metagenome: ${metagenome}"
+    python $extract --input $refinement --fasta $metagenome --output $output > $bin_seq_counts
+    echo "Wrote counts to: ${bin_seq_counts}"
 done
