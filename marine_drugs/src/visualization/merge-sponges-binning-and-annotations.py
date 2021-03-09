@@ -129,7 +129,7 @@ def fragmentation_metric(df, quality_measure=0.50):
     lengths = 0
     for length in df.length.sort_values(ascending=False):
         lengths += length
-        if lengths > target_size:
+        if lengths >= target_size:
             return length
 
 
