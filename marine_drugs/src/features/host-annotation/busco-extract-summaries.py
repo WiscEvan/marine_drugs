@@ -25,10 +25,17 @@ def retrieve_summaries(dirpath):
         else:
             raise LookupError(f"{os.path.basename(fpath)} does not appear to be a file that should be parsed!")
         # Now we want to pull the busco mode out from the file naming, e.g. 'genome' or 'proteins'
-        if "_busco_genome_" in sample:
+        # ./FL2015_34_busco_genome_auto_lineage_euk
+        # ./FL2015_44_busco_proteins_auto_lineage_euk
+        # ./FL2015_42_metagenome_busco_genome_metazoa_odb10
+        dirname = os.path.basename(os.path.dirname(fpath))
+        if "_metagenome_busco_genome_" in dirname:
+            sample = sample.split("_busco_genome_")[0]
+            busco_mode = "metagenome"
+        elif "_busco_genome_" in dirname:
             sample = sample.split("_busco_genome_")[0]
             busco_mode = "genome"
-        elif "_busco_proteins_" in sample:
+        elif "_busco_proteins_" in dirname:
             sample = sample.split("_busco_proteins_")[0]
             busco_mode = "proteins"
         else:
@@ -83,9 +90,17 @@ def main():
     metadata = pd.read_csv(args.sponge_metadata, sep='\t', index_col="Sponge specimen")
     metadata.index = metadata.index.map(lambda sample: sample.replace("-", "_"))
     master = pd.merge(df, metadata, how='left', left_index=True, right_index=True)
+    master.index.name = 'sample'
     master.sort_values(["lineage", "Percentage Complete", "busco mode"], ascending=[True, False, False], inplace=True)
+    master.index = master.index.map(lambda x: x.replace("_genomic","").replace("_protein","") if "GCF_000090795.1_v1.0" in x else x)
+
     master.to_csv(args.output, sep='\t', header=True, index=True)
-    print(f"Wrote {master.shape[0]:,} BUSCO summaries to {args.output}")
+    print(f"Wrote all BUSCO summaries to {args.output}")
+
+    out = os.path.join(os.path.dirname(args.output), "busco_metazoa_odb10_metrics.tsv")
+    metazoa = master[master.lineage == "metazoa_odb10"]
+    metazoa.to_csv(out, sep='\t', header=True, index=True)
+    print(f"Wrote {metazoa.shape[0]:,} metazoa BUSCO summaries to {out}")
 
 if __name__ == "__main__":
     main()
