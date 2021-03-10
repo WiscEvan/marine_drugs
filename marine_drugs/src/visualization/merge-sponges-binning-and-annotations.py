@@ -62,11 +62,8 @@ def get_contig_stats(assembly: str) -> pd.DataFrame:
 
 
 def aggregate_master_table(
-    assemblies_dirpath: str, binning_dirpath: str
+    assemblies_dirpath: str, binning_dirpath: str, final_binning_filepaths:str
 ) -> pd.DataFrame:
-    final_binning_filepaths = os.path.join(
-        binning_dirpath, "final_binning_filepaths.tsv"
-    )
     df = pd.read_csv(
         final_binning_filepaths, sep="\t", header=None, names=["sponge", "filepath"]
     )
@@ -162,6 +159,8 @@ def get_metabin_stats(bin_df: pd.DataFrame, binning_dirpath: str) -> pd.DataFram
         for sponge in bin_df.sponge.unique().tolist()
     }
     bin_df = bin_df.convert_dtypes()
+    bin_df.coverage = bin_df.coverage.astype('float')
+    bin_df.GC = bin_df.GC.astype('float')
     for sponge_cluster, dff in bin_df.groupby(["sponge", "cluster"]):
         sponge, cluster = sponge_cluster
         markers_df = markers_dfs[sponge]
@@ -220,23 +219,26 @@ def get_metabin_stats(bin_df: pd.DataFrame, binning_dirpath: str) -> pd.DataFram
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("contig_out", help="path to write output master table.")
-    parser.add_argument("cluster_out", help="path to write output master table.")
-    parser.add_argument("assemblies", help="directory path filtered assemblies.")
+    parser.add_argument("--contigs", help="path to write contigs master table.", required=True)
+    parser.add_argument("--clusters", help="path to write clusters master table.", required=True)
+    parser.add_argument("--binning-filepaths", help="Path to tab-delimited (no header) table of sponge to binning filepath.", required=True)
+    parser.add_argument("--assemblies", help="directory path filtered assemblies.", required=True)
     parser.add_argument(
-        "annotations", help="directory path interim binning annotations."
+        "--annotations", help="directory path interim binning annotations.", required=True
     )
     args = parser.parse_args()
-    if os.path.exists(args.contig_out) and os.stat(args.contig_out):
-        contig_master = pd.read_csv(args.contig_out, sep="\t", index_col="contig")
+    if os.path.exists(args.contigs) and os.path.getsize(args.contigs):
+        contig_master = pd.read_csv(args.contigs, sep="\t", index_col="contig")
+        print(f"Using existing contig master table provided. shape:(rows,cols)->{contig_master.shape}")
     else:
         contig_master = aggregate_master_table(
             assemblies_dirpath=args.assemblies,
             binning_dirpath=args.annotations,
+            final_binning_filepaths=args.binning_filepaths,
         )
+    contig_master.to_csv(args.contigs, sep="\t", index=True, header=True)
     cluster_master = get_metabin_stats(contig_master, args.annotations)
-    cluster_master.to_csv(args.cluster_out, sep="\t", index=True, header=True)
-    contig_master.to_csv(args.contig_out, sep="\t", index=True, header=True)
+    cluster_master.to_csv(args.clusters, sep="\t", index=True, header=True)
 
 
 if __name__ == "__main__":

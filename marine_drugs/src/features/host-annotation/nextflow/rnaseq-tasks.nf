@@ -12,7 +12,7 @@ process GENOME_GENERATE {
         path assembly
 
     output:
-        path "${assembly.simpleName}"
+        path "${assembly.simpleName}", type: 'dir'
     
     """
     STAR \
@@ -42,7 +42,7 @@ process ALIGN_RNA {
     STAR \
         --runThreadN ${task.cpus} \
         --genomeDir ${genomeDir} \
-        --outFileNamePrefix ${genomeDir.simpleName} \
+        --outFileNamePrefix ${genomeDir.simpleName}. \
         --readFilesIn ${reads} \
         --readFilesCommand zcat \
         --alignIntronMax 100000 \

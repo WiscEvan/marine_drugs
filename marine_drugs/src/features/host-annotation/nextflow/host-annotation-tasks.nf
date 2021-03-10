@@ -3,43 +3,45 @@
 nextflow.enable.dsl=2
 
 params.assembly = 'metagenome_assembly'
-params.species = 'amphimedon'
 params.reads = 'reads'
+params.outdir = 'output_directory'
+params.species = 'amphimedon'
 params.extrinsicCfgFile = 'extrinsic.cfg'
 params.cpus = 1
 
 process INTRON_HINTS {
     tag "Retrieving intron hints for ${bam.simpleName}"
     container 'augustus:latest'
+    publishDir params.outdir, pattern: "*.hints.introns.gff", mode: 'copy'
     
     input:
-    path bam
+      path bam
     
     output:
-    path 'hints.introns.gff'
+      path "${bam.simpleName}.hints.introns.gff"
     
     script:
       """
       # Get intron hints
-      bin/bam2hints --intronsonly --in=${bam} --out=hints.introns.gff
+      bam2hints --intronsonly --in=${bam} --out=${bam.simpleName}.hints.introns.gff
       """
 }
 
 process EXONPARTS_HINTS {
-    tag "Retrieving exonparts hints for ${bam.simpleName}"
+    tag "Retrieving exonparts hints for ${wig.simpleName}"
     container 'augustus:latest'
+    publishDir params.outdir, pattern: "*.hints.exonparts.gff", mode: 'copy'
     
     input:
-    path wig
+      path wig
     
     output:
-    path 'hints.exonparts.gff'
+      path "${wig.simpleName}.hints.exonparts.gff"
     
     script:
       """
       cat ${wig} \
-          | \
-          ./scripts/wig2hints.pl \
+          | wig2hints.pl \
               --width=10 \
               --margin=10 \
               --minthresh=2 \
@@ -49,23 +51,25 @@ process EXONPARTS_HINTS {
               --type=ep \
               --radius=4.5 \
               --pri=4 \
-              --strand="." > hints.exonparts.gff
+              --strand="." > ${wig.simpleName}.hints.exonparts.gff
       """
 }
 
 process RETRIEVE_HINTS {
     tag "Concatenating hints ${introns.simpleName} and ${exonparts.simpleName}"
     
+    publishDir params.outdir, pattern: "hints.gff", mode: 'copy'
+
     input:
-    path introns
-    path exonparts
+      path introns
+      path exonparts
     
     output:
-    path 'hints.gff'
+      path "${introns.simpleName}.hints.gff"
     
     script:
       """
-      cat $introns $exonparts > hints.gff
+      cat $introns $exonparts > ${introns.simpleName}.hints.gff
       """
 }
 
@@ -73,6 +77,7 @@ process PREDICT_GENES {
     tag "Augustus gene prediction w/hints ${assembly.simpleName}"
     container 'augustus:latest'
     // containerOptions "--volume ${params.containerVolume}:/input:ro"
+    publishDir params.outdir, pattern: "*.predictions.gff", mode: 'copy'
     
     input:
       path assembly
@@ -101,6 +106,7 @@ process PREDICT_GENES {
 process EXTRACT_ORFS {
     tag "Extracting ORFS for ${predictions.simpleName}"
     container 'augustus:latest'
+    publishDir params.outdir, pattern: "*.orfs.faa", mode: 'copy'
     
     input:
       path predictions
