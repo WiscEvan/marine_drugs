@@ -12,7 +12,7 @@ params.cpus = 1
 process INTRON_HINTS {
     tag "Retrieving intron hints for ${bam.simpleName}"
     container 'augustus:latest'
-    publishDir params.outdir, pattern: "*.hints.introns.gff", mode: 'copy'
+    // publishDir params.outdir, pattern: "*.hints.introns.gff", mode: 'copy'
     
     input:
       path bam
@@ -30,7 +30,7 @@ process INTRON_HINTS {
 process EXONPARTS_HINTS {
     tag "Retrieving exonparts hints for ${wig.simpleName}"
     container 'augustus:latest'
-    publishDir params.outdir, pattern: "*.hints.exonparts.gff", mode: 'copy'
+    // publishDir params.outdir, pattern: "*.hints.exonparts.gff", mode: 'copy'
     
     input:
       path wig
@@ -82,6 +82,7 @@ process PREDICT_GENES {
     input:
       path assembly
       path hints
+      path extrinsicCfgFile
     
     output:
       path "${assembly.simpleName}.predictions.gff"
@@ -92,7 +93,7 @@ process PREDICT_GENES {
         --species=${params.species} \
         --sample=${assembly.simpleName} \
         --alternatives-from-evidence=true \
-        --extrinsicCfgFile=${params.extrinsicCfgFile} \
+        --extrinsicCfgFile=${extrinsicCfgFile} \
         --allow_hinted_splicesites=atac \
         --softmasking=on \
         --protein=on \
@@ -106,26 +107,31 @@ process PREDICT_GENES {
 process EXTRACT_ORFS {
     tag "Extracting ORFS for ${predictions.simpleName}"
     container 'augustus:latest'
-    publishDir params.outdir, pattern: "*.orfs.faa", mode: 'copy'
+    publishDir params.outdir, pattern: "*.{codingseq,aa,cdsexons,mrna}", mode: 'copy'
     
     input:
+      path assembly
       path predictions
     
     output:
-      path "${predictions.simpleName}.orfs.faa"
+      path "*.aa", emit: orfs
+      path "*.codingseq", emit: codingseq
+      path "*.cdsexons", emit: cdsexons
+      path "*.mrna", emit: mrna
     
     script:
       """
-      getAnnoFasta.pl ${predictions} > ${predictions.simpleName}.orfs.faa
+      # script will generate *.codingseq, *.aa, *.cdsexons, *.mrna
+      getAnnoFasta.pl --seqfile=${assembly} ${predictions}
       """
 }
 
 process ANNOTATE_MARKERS {
-    tag "BUSCO marker prediction on ${assembly.simpleName}"
+    tag "BUSCO marker prediction on ${proteins.simpleName}"
     cpus params.cpus
     container 'ezlabgva/busco:v5.beta.1_cv1'
-    containerOptions "--volume ${params.containerVolume}:/busco_wd:ro"
     containerOptions '-u $(id -u)'
+    publishDir params.outdir, pattern: "*_markers", mode: 'copy'
     
     input:
       path proteins
@@ -139,7 +145,7 @@ process ANNOTATE_MARKERS {
         --mode proteins \
         --lineage_dataset metazoa_odb10 \
         --cpu ${task.cpus} \
-        --in /busco_wd/${proteins} \
+        --in ${proteins} \
         --out ${proteins.simpleName}_markers
       """
 }
@@ -149,17 +155,21 @@ workflow ANNOTATE_HOST {
     assembly
     bam
     wig
+    extrinsicCfgFile
 
   main:
     INTRON_HINTS(bam)
     EXONPARTS_HINTS(wig)
     RETRIEVE_HINTS(INTRON_HINTS.out, EXONPARTS_HINTS.out)
-    PREDICT_GENES(assembly, RETRIEVE_HINTS.out)
-    EXTRACT_ORFS(PREDICT_GENES.out)
-    ANNOTATE_MARKERS(EXTRACT_ORFS.out)
+    PREDICT_GENES(assembly, RETRIEVE_HINTS.out, extrinsicCfgFile)
+    EXTRACT_ORFS(assembly, PREDICT_GENES.out)
+    ANNOTATE_MARKERS(EXTRACT_ORFS.out.orfs)
 
   emit:
     predictions = PREDICT_GENES.out
-    orfs = EXTRACT_ORFS.out
+    orfs = EXTRACT_ORFS.out.orfs
+    mrna = EXTRACT_ORFS.out.mrna
+    codingseq = EXTRACT_ORFS.out.codingseq
+    cdsexons = EXTRACT_ORFS.out.cdsexons
     markers = ANNOTATE_MARKERS.out
 }

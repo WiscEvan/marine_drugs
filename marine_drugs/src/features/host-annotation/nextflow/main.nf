@@ -3,12 +3,18 @@
 nextflow.enable.dsl=2
 
 
-params.assembly = '/home/evan/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_5.filtered.fna'
-params.reads = '/home/evan/marine_drugs/marine_drugs/data/interim/rnaseq/FL2015-5_RNA_seqyclean_PE{1,2}.fastq.gz'
-params.outdir = '/home/evan/marine_drugs/marine_drugs/data/processed/sponge-markers'
-params.species = 'amphimedon'
-params.extrinsicCfgFile = '/home/evan/marine_drugs/marine_drugs/src/features/host-annotation/augustus-gene-calling/extrinsic.cfg'
-params.cpus = 50
+params.assembly = "$HOME/marine_drugs/marine_drugs/data/interim/assemblies/FL2015_9.filtered.fna"
+params.reads = "$HOME/marine_drugs/marine_drugs/data/interim/rnaseq/FL2015-9_RNA_seqyclean_PE{1,2}.fastq.gz"
+params.outdir = "$HOME/marine_drugs/marine_drugs/data/processed/sponge-markers"
+params.species = null
+if ( !params.species || params.species instanceof Boolean ) 
+    error """
+    No species identifier provided! 
+    Run `augustus --species=help` for list of available species.
+    Then pass in with `nextflow run --species=<selected-identifier> ...`
+    """
+params.extrinsicCfgFile = "$HOME/marine_drugs/marine_drugs/src/features/host-annotation/nextflow/extrinsic.cfg"
+params.cpus = 65
 
 include { RNASEQ_ALIGNMENT } from './rnaseq-tasks.nf'
 include { ANNOTATE_HOST } from './host-annotation-tasks.nf'
@@ -42,8 +48,11 @@ workflow {
     Channel
         .fromFilePairs( params.reads, checkIfExists: true, type: 'file')
         .set{ reads_ch }
+    Channel
+        .fromPath( params.extrinsicCfgFile, checkIfExists: true, type: 'file')
+        .set{ extrinsic_config_ch }
 
     RNASEQ_ALIGNMENT(assembly_ch, reads_ch)
-    ANNOTATE_HOST(assembly_ch, RNASEQ_ALIGNMENT.out.bam, RNASEQ_ALIGNMENT.out.wig)
+    ANNOTATE_HOST(assembly_ch, RNASEQ_ALIGNMENT.out.bam, RNASEQ_ALIGNMENT.out.wig, extrinsic_config_ch)
 
 }
