@@ -38,6 +38,9 @@ def retrieve_summaries(dirpath):
         elif "_busco_proteins_" in dirname:
             sample = sample.split("_busco_proteins_")[0]
             busco_mode = "proteins"
+        elif "_markers" in dirname:
+            sample = sample.split("_markers")[0]
+            busco_mode = "proteins"
         else:
             raise LookupError(f"{os.path.basename(fpath)} does not appear to be a file that should be parsed!")
 
