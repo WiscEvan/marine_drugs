@@ -9,7 +9,7 @@ def main():
     parser.add_argument("--input", help="Path to humann profiles table", required=True)
     parser.add_argument("--output", help="Path to write munged table", required=True)
     args = parser.parse_args()
-    pd.read_csv(args.input, sep="\t")
+    df = pd.read_csv(args.input, sep="\t")
     # First remove Remove RNA-seq filename data and reduce to just sample name to match sponge metadata.
     # R reads '-' in as '.' so we explictly replace here.
     df.columns = df.columns.map(
