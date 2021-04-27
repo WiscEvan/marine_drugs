@@ -20,13 +20,16 @@ def main():
     df.columns = df.columns.map(
         lambda c: c.strip()
         if "Pathway" in c or "FL2015" in c or "Gene" in c
-        else f"FL2014.{int(c.split('.')[-1]):02d}"
+        else f"FL2014.{int(c.split('.')[-1])}"
     )
+
 
     index_col = [col for col in df.columns if "FL20" not in col][0]
     df.set_index(index_col, inplace=True)
     df.index = df.index.map(lambda x: x.replace("##", "--"))
 
+    if "Pathway" in index_col:
+        df = df.transpose()
     df.to_csv(args.output, sep="\t", index=True, header=True)
     print(f"Wrote munged table to {args.output}")
 

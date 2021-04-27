@@ -1,12 +1,14 @@
 #!/usr/bin/env Rscript
-library("optparse")
-library("Maaslin2")
+library(optparse)
+library(Maaslin2)
+
 # library("parallelly")
 # if(!requireNamespace("BiocManager", quietly = TRUE))
 #   install.packages("BiocManager")
 # BiocManager::install("Maaslin2")
 
 cores <- parallelly::availableCores()
+
 option_list = list(
   make_option(c("-p", "--profiles"), type="character", default=NULL, help="Input humann genefamilies or pathwayabundances profiles table", metavar="character"),
   make_option(c("-m", "--metadata"), type="character", default=NULL, help="Path to sponge metadata", metavar="character"),
@@ -14,28 +16,27 @@ option_list = list(
   make_option(c("-c", "--cores"), type="integer", default=cores, help="number of cores to use", metavar="character")
 ); 
  
-opt_parser = OptionParser(option_list=option_list);
-opt = parse_args(opt_parser);
+parser <- OptionParser(option_list=option_list);
+opt <- parse_args(parser);
 
 if (is.null(opt$profiles)){
-  print_help(opt_parser)
+  print_help(parser)
   stop("Input profiles must be supplied", call.=FALSE)
 }
 if (is.null(opt$metadata)){
-  print_help(opt_parser)
+  print_help(parser)
   stop("Metadata file must be supplied", call.=FALSE)
 }
 if (is.null(opt$output)){
-  print_help(opt_parser)
+  print_help(parser)
   stop("Output directory must be supplied", call.=FALSE)
 }
 
 # Following : https://huttenhower.sph.harvard.edu/maaslin
 #Load MaAsLin2 package into the R environment
-library(Maaslin2)
 # ?Maaslin2
 
-rm(list=ls())
+# rm(list=ls())
 # getwd()
 # setwd("~/marine_drugs/marine_drugs/reports/figures/")
 # dir.create("pathway-profiling") # Create a new directory
@@ -127,43 +128,43 @@ fit_data = Maaslin2(
 
 ## Associations between pathway abundances
 
-input_data = "/Users/rees/marine_drugs/marine_drugs/data/processed/pathway-profiling/master_community_pathabundance_profiles.munged.tsv"
-input_data
+# input_data = "/Users/rees/marine_drugs/marine_drugs/data/processed/pathway-profiling/master_community_pathabundance_profiles.munged.tsv"
+# input_data
 
-# 2. Metadata file of sponge phenotypes
-input_metadata = "/Users/rees/marine_drugs/marine_drugs/data/raw/sponge_metadata.rnaseqsponges.munged.tsv"
-input_metadata
+# # 2. Metadata file of sponge phenotypes
+# input_metadata = "/Users/rees/marine_drugs/marine_drugs/data/raw/sponge_metadata.rnaseqsponges.munged.tsv"
+# input_metadata
 
-# Reading inputs as dataframes
-df_data = read.table(file = input_data,
-                     header = T,
-                     quote = "",
-                     row.names = 1,
-                     sep = "\t",
-                     stringsAsFactors = FALSE,
-                     fill=TRUE)
-# Preview dataframe
-df_data[1:5, 1:5]
-# Now read in sponge metadata (bioactivity and taxonomy)
-df_metadata = read.table(file = input_metadata,
-                         header = TRUE,
-                         row.names = 1,
-                         sep = "\t",
-                         quote = "",
-                         stringsAsFactors = FALSE)
-# Preview dataframe
-df_metadata[1:5, ]
+# # Reading inputs as dataframes
+# df_data = read.table(file = input_data,
+#                      header = T,
+#                      quote = "",
+#                      row.names = 1,
+#                      sep = "\t",
+#                      stringsAsFactors = FALSE,
+#                      fill=TRUE)
+# # Preview dataframe
+# df_data[1:5, 1:5]
+# # Now read in sponge metadata (bioactivity and taxonomy)
+# df_metadata = read.table(file = input_metadata,
+#                          header = TRUE,
+#                          row.names = 1,
+#                          sep = "\t",
+#                          quote = "",
+#                          stringsAsFactors = FALSE)
+# # Preview dataframe
+# df_metadata[1:5, ]
 
-# ?subset
-# df_metadata <- subset(df_metadata, Metatranscriptome == "Yes")
-# df_metadata
+# # ?subset
+# # df_metadata <- subset(df_metadata, Metatranscriptome == "Yes")
+# # df_metadata
 
-# Initially received error about some library being corrupt:
-# Solution: https://github.com/lme4/lme4/issues/407#issuecomment-273537772
+# # Initially received error about some library being corrupt:
+# # Solution: https://github.com/lme4/lme4/issues/407#issuecomment-273537772
 
-fit_data = Maaslin2(
-  input_data = df_data, 
-  input_metadata = df_metadata, 
-  output = "pathway_abundances_bioactivity_associations", 
-  fixed_effects = c("Activity", "Taxonomic.Classification"),
-  cores=2)
+# fit_data = Maaslin2(
+#   input_data = df_data, 
+#   input_metadata = df_metadata, 
+#   output = "pathway_abundances_bioactivity_associations", 
+#   fixed_effects = c("Activity", "Taxonomic.Classification"),
+#   cores=2)
