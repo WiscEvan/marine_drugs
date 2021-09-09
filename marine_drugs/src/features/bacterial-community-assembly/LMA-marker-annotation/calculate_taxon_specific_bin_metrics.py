@@ -71,7 +71,7 @@ def get_bin_metrics(df, markers_df):
                 copy_num_counts.update(
                     {
                         f"{copy_num}+": copy_num_marker_count,
-                        f"({copy_num})+-copy PFAMS": copy_num_pfams,
+                        f"({copy_num}+)-copy PFAMS": copy_num_pfams,
                         f"({copy_num}+)-copy TIGRFAMS": copy_num_tigrfams,
                     }
                 )
@@ -91,6 +91,7 @@ def get_bin_metrics(df, markers_df):
 
         # Calculate Completeness
         completeness = present_marker_count / expected_number * 100
+        completeness = round(completeness, 2)
 
         # Calculate purity
         # NOTE: Protect from divide by zero
@@ -99,6 +100,7 @@ def get_bin_metrics(df, markers_df):
             purity = pd.NA
         else:
             purity = single_copy_marker_count / present_marker_count * 100
+            purity = round(purity, 2)
 
         # Get total marker sum
         marker_sum = markers.sum()
@@ -161,7 +163,7 @@ def get_bin_metrics(df, markers_df):
         col for col in metrics_df.columns if col in copy_nums or col.endswith("+")
     ]
     outcols = mult_cols + metric_cols + fam_cols
-    return metrics_df[outcols]
+    return metrics_df[outcols].convert_dtypes()
 
 
 def main():
@@ -186,7 +188,7 @@ def main():
     args = parser.parse_args()
 
     # "/home/evan/marine_drugs/marine_drugs/data/interim/LMA-marker-annotation/FL2015_4_phylum_Proteobacteria_markers_all_markers.hmmscan.tsv"
-    markers_df = read_hmmscan(infpath=args.hmmscan, outfpath=args.markers)
+    markers_df = read_hmmscan(infpath=args.hmmscan, outfpath=args.output_markers)
 
     # Read binning to assess metrics
     # binning = "/home/evan/marine_drugs/marine_drugs/data/interim/refined/first_round_of_refinements/before_sams_notes/FL2015_4.bacteria.binning.umap.refined.csv"
@@ -194,8 +196,8 @@ def main():
 
     metrics_df = get_bin_metrics(df=bin_df, markers_df=markers_df)
 
-    metrics_df.to_csv(args.metrics, sep="\t", index=True, header=True)
-    print(f"Wrote {metrics_df.shape[0]:,} clusters' metrics to {args.metrics}")
+    metrics_df.to_csv(args.output_metrics, sep="\t", index=True, header=True)
+    print(f"Wrote {metrics_df.shape[0]:,} clusters' metrics to {args.output_metrics}")
 
 
 if __name__ == "__main__":
