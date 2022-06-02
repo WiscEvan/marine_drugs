@@ -11,5 +11,10 @@ plotly-orca
 psutil
 scikit-learn
 scikit-bio
+star
 tsne
 umap-learn
+bandage
+samtools
+bedtools
+bowtie2

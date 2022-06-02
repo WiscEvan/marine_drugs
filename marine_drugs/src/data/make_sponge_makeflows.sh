@@ -129,7 +129,7 @@ EOM
     summarylog="${logs}/${metagenome}.summary.log"
 
     # command="makeflow -N 1 -n 1 -c \${CORES} --mem=\${MEMORY}M --email=${email} --summary-log=${summarylog} --monitor=${metagenome_logs} -T slurm ${makeflow}"
-    command="makeflow --email=${email} --summary-log=${summarylog} --monitor=${metagenome_logs} -T slurm ${makeflow}"
+    command="makeflow --local-cores=40 --email=${email} --summary-log=${summarylog} --monitor=${metagenome_logs} -T slurm ${makeflow}"
     echo $command >> ${sponge_batch}
 
     ### Now add sbatch metagenome.sh to run_makeflows.sh for submitting all to queue at once.

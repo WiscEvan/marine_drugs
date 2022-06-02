@@ -1,0 +1,91 @@
+# Autometa Makeflow DAG
+LENGTH_FILTER=/home/evan/miniconda3/envs/autometa/bin/autometa-length-filter
+COVERAGES=/home/evan/miniconda3/envs/autometa/bin/autometa-coverage
+KMERS=/home/evan/miniconda3/envs/autometa/bin/autometa-kmers
+ORFS=/home/evan/miniconda3/envs/autometa/bin/autometa-orfs
+MARKERS=/home/evan/miniconda3/envs/autometa/bin/autometa-markers
+TAXONOMY=/home/evan/miniconda3/envs/autometa/bin/autometa-taxonomy
+BINNING=/home/evan/miniconda3/envs/autometa/bin/autometa-binning
+RECRUITMENT=/home/evan/miniconda3/envs/autometa/bin/autometa-unclustered-recruitment
+
+
+CATEGORY="recruitment"
+
+archaea.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv archaea.binning.dbscan.tsv archaea.markers.tsv taxonomy.tsv
+    $(RECRUITMENT) kmers.am_clr.tsv coverages.tsv archaea.binning.dbscan.tsv archaea.markers.tsv archaea.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+
+bacteria.unclustered_recruitment.tsv : kmers.am_clr.tsv coverages.tsv bacteria.binning.dbscan.tsv bacteria.markers.tsv taxonomy.tsv
+    $(RECRUITMENT) kmers.am_clr.tsv coverages.tsv bacteria.binning.dbscan.tsv bacteria.markers.tsv bacteria.unclustered_recruitment.tsv --taxonomy taxonomy.tsv --classifier decision_tree
+
+CATEGORY="binning"
+
+archaea.binning.dbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+    $(BINNING) kmers.am_clr.tsv coverages.tsv archaea.markers.tsv archaea.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain archaea
+
+bacteria.binning.dbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+   $(BINNING) kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.dbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method dbscan --domain bacteria
+
+archaea.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv archaea.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+    $(BINNING) kmers.am_clr.tsv coverages.tsv archaea.markers.tsv archaea.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain archaea
+
+bacteria.binning.hdbscan.tsv : kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv kmers.am_clr.bhsne.tsv taxonomy.tsv
+   $(BINNING) kmers.am_clr.tsv coverages.tsv bacteria.markers.tsv bacteria.binning.hdbscan.tsv --embedded-kmers kmers.am_clr.bhsne.tsv --taxonomy taxonomy.tsv --clustering-method hdbscan --domain bacteria
+
+CATEGORY="markers"
+
+bacteria.markers.tsv : orfs.faa
+    $(MARKERS) --orfs orfs.faa --kingdom bacteria --hmmscan bacteria.hmmscan.tsv --out bacteria.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
+
+archaea.markers.tsv : orfs.faa
+    $(MARKERS) --orfs orfs.faa --kingdom archaea --hmmscan archaea.hmmscan.tsv --out archaea.markers.tsv --dbdir /home/evan/Autometa/autometa/databases/markers
+
+CATEGORY="kmer-bhsne-embedding"
+
+kmers.am_clr.bhsne.tsv : metagenome.filtered.fna kmers.tsv kmers.am_clr.tsv
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.am_clr.tsv --embedded kmers.am_clr.bhsne.tsv --size 5 --norm-method am_clr --do-pca --pca-dimensions 50 --embed-dimensions 2 --embed-method bhsne
+
+kmers.ilr.bhsne.tsv : metagenome.filtered.fna kmers.tsv kmers.ilr.tsv
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.ilr.tsv --embedded kmers.ilr.bhsne.tsv --size 5 --norm-method ilr --do-pca --pca-dimensions 50 --embed-dimensions 2 --embed-method bhsne
+
+CATEGORY="kmer-umap-embedding"
+
+kmers.am_clr.umap.tsv : metagenome.filtered.fna kmers.tsv kmers.am_clr.tsv
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.am_clr.tsv --embedded kmers.am_clr.umap.tsv --size 5 --norm-method am_clr --do-pca --pca-dimensions 50 --embed-dimensions 2 --embed-method umap
+
+kmers.ilr.umap.tsv : metagenome.filtered.fna kmers.tsv kmers.ilr.tsv
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.ilr.tsv --embedded kmers.ilr.umap.tsv --size 5 --norm-method ilr --do-pca --pca-dimensions 50 --embed-dimensions 2 --embed-method umap
+
+CATEGORY="kmer-normalization"
+
+kmers.ilr.tsv : metagenome.filtered.fna kmers.tsv
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.ilr.tsv --norm-method ilr --size 5
+
+kmers.am_clr.tsv : metagenome.filtered.fna kmers.tsv
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --normalized kmers.am_clr.tsv --norm-method am_clr --size 5
+
+CATEGORY="kmer-counting"
+# CORES=10
+
+kmers.tsv : metagenome.filtered.fna
+    $(KMERS) --fasta metagenome.filtered.fna --kmers kmers.tsv --multiprocess --cpus 10
+
+CATEGORY="taxonomy-assignment"
+
+taxonomy.tsv : metagenome.filtered.fna orfs.fna orfs.faa blastp.tsv
+    $(TAXONOMY) --ncbi /mnt/autometa_databases/ --assembly metagenome.filtered.fna --nucl-orfs orfs.fna --prot-orfs orfs.faa --blast blastp.tsv --lca lca.tsv --method majority_vote taxonomy.tsv
+
+CATEGORY="coverage"
+
+coverages.tsv : metagenome.filtered.fna
+    $(COVERAGES) --from-spades --assembly metagenome.filtered.fna --out coverages.tsv
+
+CATEGORY="orf-calling"
+# CORES=5
+
+orfs.faa orfs.fna : metagenome.filtered.fna
+   $(ORFS) --parallel --cpus 5 metagenome.filtered.fna orfs.fna orfs.faa
+
+CATEGORY="length-filter"
+
+metagenome.filtered.fna : metagenome.fasta
+    $(LENGTH_FILTER) metagenome.fasta metagenome.filtered.fna --cutoff 900

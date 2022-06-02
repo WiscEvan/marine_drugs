@@ -9,16 +9,23 @@ marine_drugs/data/raw/assemblies/*.stats.tsv
 # Bulky Data
 marine_drugs/data/interim/assemblies/*.fna
 marine_drugs/data/interim/binning/
+marine_drugs/data/
 
 #slurm and makeflow generated files
-marine_drugs/src/features/*.err
-marine_drugs/src/features/*.makeflowlog
-marine_drugs/src/features/librmonitor*
-marine_drugs/src/features/*failed*
-marine_drugs/src/features/resource_*
-marine_drugs/src/features/slurm*
-marine_drugs/src/data/logs/
-
+*.err
+*.makeflowlog
+librmonitor*
+*failed*
+resource_*
+slurm*
+*.fastq.gz
 #condor requirements and generated logs
-marine_drugs/src/features/*.log
-marine_drugs/src/features/diamond
+*log*
+*.out
+*.log
+diamond
+
+#nextflow files and directories
+*work
+.nextflow*
+pipeline_info
