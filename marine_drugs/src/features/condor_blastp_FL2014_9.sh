@@ -4,8 +4,8 @@
 cp /staging/groups/kwan_group/nr.dmnd ./
 
 ./diamond blastp \
-    --query FL2014_3.orfs.faa \
-    --out FL2014_3.blastp.tsv \
+    --query FL2014_9.orfs.faa \
+    --out FL2014_9.blastp.tsv \
     --db nr.dmnd \
     --evalue 1e-5 \
     --max-target-seqs 200 \
