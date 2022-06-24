@@ -250,3 +250,53 @@ bin_pathway_mean_df.to_csv(input_directory+'/'+base_name+'_mean_pathway_expressi
 #Get median expression per pathway per bin
 bin_pathway_median_df = KEGG_bin_pathway_merged.groupby('Pathway', as_index=False).median()
 bin_pathway_median_df.to_csv(input_directory+'/'+base_name+'_median_pathway_expression_per_bin.tab', sep='\t', index=False)
+
+#Adding in COG annotations
+COG_file = [file for file in os.listdir(input_directory) if file.endswith("_eggNOG_output.emapper.annotations")][0]
+COG_df_init = pd.read_csv(input_directory+'/'+COG_file, skiprows=4, sep="\t", header=0)
+COG_df_init = COG_df_init.rename(columns={'#query': 'Query'})
+COG_df_init.drop(COG_df_init.tail(3).index,inplace = True)
+COG_df_init[['Geneid']] = COG_df_init.Query.str.split('_', expand=True)[1]+"_"+COG_df_init.Query.str.split('_', expand=True)[6]
+COG_df = COG_df_init[['Geneid','COG_category']]
+
+#Merge with master and then extract expression per gene COG annot
+tmp_COG = pd.merge(master_df,COG_df, on='Geneid',how = 'inner')
+COG_mini1 = tmp_COG[['COG_category','Rel_Expression']]
+COG_mini1 = COG_mini1.fillna(0)
+exploded_cats_df = COG_mini1['COG_category'].apply(list).explode() #Generate new df where category string has been split into new rows
+COG_mini=pd.merge(COG_mini1, exploded_cats_df, left_index=True, right_index=True) #Add back in expression data
+COG_mini = COG_mini.drop(['COG_category_x'], axis=1)
+COG_mini = COG_mini.rename(columns={'COG_category_y': 'COG_category'})
+
+#Get sample expression per COG category
+COG_expression_matrix_sum = COG_mini.pivot_table(index='COG_category', values='Rel_Expression', aggfunc=np.sum).reset_index()
+COG_expression_matrix_mean = COG_mini.pivot_table(index='COG_category', values='Rel_Expression', aggfunc=np.mean).reset_index()
+COG_expression_matrix_median = COG_mini.pivot_table(index='COG_category', values='Rel_Expression', aggfunc=np.median).reset_index()
+
+#Merge the tables
+exp_tables = [COG_expression_matrix_sum,COG_expression_matrix_mean,COG_expression_matrix_median]
+COG_expression_matrix_df = reduce(lambda  left,right: pd.merge(left,right,on=['COG_category'],how='outer'), exp_tables)
+
+#Rename headers
+COG_expression_matrix_df  = COG_expression_matrix_df.rename(columns={'Rel_Expression_x': 'Sum_of_expression'})
+COG_expression_matrix_df  = COG_expression_matrix_df.rename(columns={'Rel_Expression_y': 'Average_expression'})
+COG_expression_matrix_df  = COG_expression_matrix_df.rename(columns={'Rel_Expression': 'Median_expression'})
+
+#Write it out to file
+COG_expression_matrix_df.to_csv(input_directory+'/'+base_name+'_sample_COG_expression_summary.tab', sep='\t', index=False)
+
+#Redo all of the above but get stats per bin
+COG_bins1 = tmp_COG[['COG_category','Bin','Rel_Expression']]
+COG_bins1 = COG_bins1.fillna(0)
+exploded_cats_bins_df = COG_bins1['COG_category'].apply(list).explode() #Generate new df where category string has been split into new rows
+COG_bins = pd.merge(COG_bins1, exploded_cats_bins_df, left_index=True, right_index=True) #Add back in expression data
+COG_bins = COG_bins.drop(['COG_category_x'], axis=1)
+COG_bins = COG_bins.rename(columns={'COG_category_y': 'COG_category'})
+
+#Get the summaries and print it out
+COG_bin_expression_mean = COG_bins.pivot_table(columns='Bin', index='COG_category', values='Rel_Expression',aggfunc=np.mean).reset_index()
+COG_bin_expression_mean.to_csv(input_directory+'/'+base_name+'_binned_COG_expression_mean.tab', sep='\t', index=False)
+
+COG_bin_expression_median = COG_bins.pivot_table(columns='Bin', index='COG_category', values='Rel_Expression',aggfunc=np.median).reset_index()
+COG_bin_expression_median.to_csv(input_directory+'/'+base_name+'_binned_COG_expression_median.tab', sep='\t', index=False)
+
