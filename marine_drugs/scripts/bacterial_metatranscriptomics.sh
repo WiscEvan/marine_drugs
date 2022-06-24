@@ -188,5 +188,11 @@ python /home/sam/Slurm_scripts/Sponge_Project_scripts/strict_kegg_extractor.py $
 
 echo "Reliable KOfamScan annotations identified and stored"
 
+#Get COG annots
+eval "$(conda shell.bash hook)"
+conda activate eggnog
+emapper.py -i ${scaffolds/.fasta/_bacterial_only.faa} -o ${scaffolds/.fasta/_eggNOG_output} --output_dir $input_dir --cpu 16 --data_dir /media/bigdrive1/Databases/eggnog_mapper_latest
+conda deactivate 
+
 #Do TPM calculations
 python /home/sam/Useful_scripts/bacterial_final_file_generator.py $input_dir $basename
