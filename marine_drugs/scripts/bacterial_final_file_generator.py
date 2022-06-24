@@ -300,3 +300,18 @@ COG_bin_expression_mean.to_csv(input_directory+'/'+base_name+'_binned_COG_expres
 COG_bin_expression_median = COG_bins.pivot_table(columns='Bin', index='COG_category', values='Rel_Expression',aggfunc=np.median).reset_index()
 COG_bin_expression_median.to_csv(input_directory+'/'+base_name+'_binned_COG_expression_median.tab', sep='\t', index=False)
 
+#Counting genes annotated against KEGG and COG databases
+all_gene_counts = master_df.groupby('Bin')['Geneid'].nunique() #Count genes per bin
+kegg_gene_counts =tmp_KO.groupby('Bin')['KO'].count() #Count genes with KEGG annotations
+COG_gene_counts = tmp_COG.groupby('Bin')['COG_category'].count() #Count genes with COG annotations
+
+#merge the dfs
+perc_annots_pre = pd.merge(all_gene_counts,kegg_gene_counts, on='Bin',how = 'outer')
+perc_annots =pd.merge(perc_annots_pre,COG_gene_counts,on='Bin',how = 'outer')
+
+#Calculate % annotated genes per bin
+perc_annots['Percentage_KO_annotated'] = perc_annots['KO']/perc_annots['Geneid']*100
+perc_annots['Percentage_COG_annotated'] = perc_annots['COG_category']/perc_annots['Geneid']*100
+
+#print it out to file
+perc_annots.to_csv(input_directory+'/'+base_name+'_percent_annots_per_bin.tab', sep='\t', index=True)
