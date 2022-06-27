@@ -258,6 +258,7 @@ COG_df_init = COG_df_init.rename(columns={'#query': 'Query'})
 COG_df_init.drop(COG_df_init.tail(3).index,inplace = True)
 COG_df_init[['Geneid']] = COG_df_init.Query.str.split('_', expand=True)[1]+"_"+COG_df_init.Query.str.split('_', expand=True)[6]
 COG_df = COG_df_init[['Geneid','COG_category']]
+COG_df  = COG_df .replace('-', np.nan) #Replace not annotated with Nan
 
 #Merge with master and then extract expression per gene COG annot
 tmp_COG = pd.merge(master_df,COG_df, on='Geneid',how = 'inner')
