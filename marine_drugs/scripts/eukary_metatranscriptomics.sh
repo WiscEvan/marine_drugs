@@ -177,7 +177,7 @@ conda deactivate
 echo "KofamScan run complete"
 
 #Extract only reliable KEGG results
-python /home/sam/Slurm_scripts/Sponge_Project_scripts/strict_kegg_extractor.py $input_dir
+python /home/sam/Slurm_scripts/Sponge_Project_scripts/eukary_strict_kegg_extractor.py $input_dir
 
 echo "Reliable KOfamScan annotations identified and stored"
 
@@ -190,4 +190,4 @@ conda deactivate
 echo "eggNOG annotations identified and stored"
 
 #Do TPM calculations
-#python /home/sam/Useful_scripts/eukary_final_file_generator.py $input_dir $basename
+python /home/sam/Useful_scripts/eukary_final_file_generator.py $input_dir $basename
