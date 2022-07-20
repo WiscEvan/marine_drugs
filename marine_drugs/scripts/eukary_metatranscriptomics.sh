@@ -190,4 +190,4 @@ conda deactivate
 echo "eggNOG annotations identified and stored"
 
 #Do TPM calculations
-python /home/sam/Useful_scripts/eukary_final_file_generator.py $input_dir $basename
+python /home/sam/Useful_scripts/eukary_file_generator.py $input_dir $basename
