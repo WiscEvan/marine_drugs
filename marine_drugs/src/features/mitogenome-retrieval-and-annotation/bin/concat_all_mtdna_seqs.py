@@ -169,23 +169,25 @@ class Gene:
         # Haliclona_tubifera; 9527-10333; +; cox3 3'partial
         # Haliclona_tubifera_atp6 3'partial
         # Haliclona_tubifera_cox2
+        # Haliclona_tubifera; 9527-10333; +; cox3 3'partial
         if "Code" in self.description:
             # Geodia_atlantica_nad3_Code - 4
             gene = self.description.split('_')[2]
         elif "Haliclona - tubifera" in self.description:
-            # Haliclona - tubifera 9527-10333 + cox3 3'partial
             # Haliclona - tubifera 4210-4605 + nad1partial
-            gene = self.description.split(' + ')[-1].replace("partial", "").replace("3'partial", "").strip()
+            gene = self.description.split(' + ')[-1].replace("partial", "").replace("3'partial", "").strip().split()[0]
         # >Haliclona_tubifera; 6206-8119; +; nad5 3'partial
         elif "Haliclona_tubifera" in self.description:
             # Haliclona_tubifera - atp6 3'partial
             gene = self.description.split('-')[-1].replace("3'partial", "").strip()
+            gene = gene.split()[0] if gene.count('3') == 2 else gene
         elif "Phakellia_ventilabrum" in self.description and self.description.count("-") == 2:
             # Phakellia_ventilabrum - 4768-4971 + atp8
             gene = self.description.split(' + ')[-1].strip()
         elif "-" in self.description:
             gene = self.description.split('-')[-1].strip()
         gene = 'nad4' if gene == 'ad4' else gene # Phorbas_aerolatus - ad4
+        gene = gene.strip()
         return gene
 
     def find_organism(self, format: Literal['plese','lavrov']) -> str:
@@ -300,6 +302,8 @@ def main():
     # print(sorted_genes.keys())
     total_organisms = len(set([record.organism for records in sorted_genes.values() for record in records]))
     print(f"total organisms found: {total_organisms}")
+    if not os.path.exists(args.out):
+        os.makedirs(args.out, exist_ok=True)
     # print(set([record.organism for records in sorted_genes.values() for record in records]))
     for gene_name,records in sorted_genes.items():
         organisms = set()

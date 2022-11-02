@@ -9,6 +9,10 @@
 DATA_DIR="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/data"
 OUTDIR="${DATA_DIR}/processed/mitogenomes"
 
+if [ ! -d $OUTDIR ];then
+    mkdir -p $OUTDIR
+fi
+
 mitos_results_outdir="${DATA_DIR}/interim/mitogenomes/mitos_results"
 mitos_parsed_results="${DATA_DIR}/interim/mitogenomes/mitos_results/munged"
 # Retrieve mitos-annotated CDS seqs
@@ -16,35 +20,36 @@ mitos_parsed_results="${DATA_DIR}/interim/mitogenomes/mitos_results/munged"
 #     --mitos $mitos_results_outdir \
 #     --outdir $mitos_parsed_results
 
-# 0. Get CDS seqs from external references (lavrov and plese) and mitos
+# 0. Get CDS seqs from lavrov
+# NOTE: get_lavrov_et_al_mtdna.sh runs extract_seqs_from_gbk.py on downloaded gbk files
 bash /media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/data/get_lavrov_et_al_mtdna.sh
+# 0. Get CDS seqs from plese
+# NOTE: get_plese_et_al_mtdna.sh runs translate_mtdna_cds_fna.py on downloaded mtdna.cds.fna files
 bash /media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/data/get_plese_et_al_mtdna.sh
-bash /media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/data/extract_reference_mtdna_gbk_to_faa.sh
+
 
 # 1.a Concatenate & sort individual CDS seqs
 this_study_mtdna="${DATA_DIR}/interim/mitogenomes/mitos_results"
 plese_mtdna="${DATA_DIR}/external/plese_et_al_2021"
 lavrov_mtdna="${DATA_DIR}/external/lavrov_et_al"
 concat_script="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/features/mitogenome-retrieval-and-annotation/bin/concat_all_mtdna_seqs.py"
-outdir="${DATA_DIR}/interim/mitogenomes/concat"
+concat_dir="${DATA_DIR}/interim/mitogenomes/concat" # concat {faa-dir}/{gene}.faa files
 python $concat_script \
     --faa-dir $plese_mtdna $lavrov_mtdna $this_study_mtdna \
     --faa-format plese lavrov mitos \
-    --out $outdir
+    --out $concat_dir
 
 # 1.b Check genes for minimum organism set
-concat_dir="${DATA_DIR}/interim/mitogenomes/concat" # *.faa files
 clean_dir="${DATA_DIR}/interim/mitogenomes/cleaned" # *.faa files
 clean_script="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/features/mitogenome-retrieval-and-annotation/bin/get_gene_superset.py"
 python $clean_script \
-    --in $concat_dir \
+    --in $clean_dir \
     --out $clean_dir
 
 # 2. Perform (sorted) seq alignments using mafft
-clean_dir="${DATA_DIR}/interim/mitogenomes/cleaned" # *.faa files
-align_dir="${DATA_DIR}/interim/mitogenomes/mafft" # *.mafft.faa
-if [ ! -d $align_dir ];then
-    mkdir -p $align_dir
+trim_dir="${DATA_DIR}/interim/mitogenomes/mafft" # *.mafft.faa
+if [ ! -d $trim_dir ];then
+    mkdir -p $trim_dir
 fi
 
 # mamba install -c bioconda mafft
@@ -71,9 +76,7 @@ done
 # 4. Concatenate sorted, aligned and trimmed files (these are in nexus format output from bmge)
 combine_nexi_script="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/features/mitogenome-retrieval-and-annotation/bin/concat_nex.py"
 combined_nexus="${OUTDIR}/combined.nex"
-if [ ! -d $OUTDIR ];then
-    mkdir -p $OUTDIR
-fi
+
 nexi=(`find $trim_dir -name "*.nex"`)
 python $combine_nexi_script \
     --nex ${nexi[@]} \

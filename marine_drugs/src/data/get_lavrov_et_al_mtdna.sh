@@ -15,3 +15,12 @@ done < /media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_
 
 # wget https://megasun.bch.umontreal.ca/People/lang/FMGP/Cantharellus.html
 
+script="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/data/extract_seqs_from_gbk.py"
+# gbk directory: lavrov_et_al
+gbk_dir="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/data/external/lavrov_et_al"
+gbk_orgs="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/data/external/lavrov_et_al/gbk_organism.tsv"
+gbks=(`find $gbk_dir -name "*.gbk"`)
+python $script \
+    --gbk ${gbks[@]} \
+    --gbk-orgs $gbk_orgs \
+    --outdir $gbk_dir

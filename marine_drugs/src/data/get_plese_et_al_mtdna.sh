@@ -32,6 +32,6 @@ wget -O ${OUTDIR}/haliclona_tubifera.mtdna.cds.fna https://ars.els-cdn.com/conte
 wget -O ${OUTDIR}/stylissa_carteri.mtdna.cds.fna https://ars.els-cdn.com/content/image/1-s2.0-S1055790320302839-mmc90.txt
 
 src="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/src/features/mitogenome-retrieval-and-annotation/bin/translate_mtdna_cds_fna.py"
-for mtdna_fna in `find marine_drugs/data/external/plese_et_al_2021 -name "*.mtdna.cds.fna"`;do
+for mtdna_fna in `find /media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine_drugs/marine_drugs/data/external/plese_et_al_2021 -name "*.mtdna.cds.fna"`;do
     python $src --fasta ${mtdna_fna} --out ${mtdna_fna/.fna/.faa} --code 4
 done
