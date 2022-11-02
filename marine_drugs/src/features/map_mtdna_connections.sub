@@ -1,0 +1,22 @@
+#The below file will run a single job targeting a machine with 16 cores andat least
+#127 GB RAM, with the shared Gluster file system, and will guarantee 72 hours of runtime.
+job = bsimplexV3.10_scaffoldConnections
+universe = vanilla
+log = $(job)_$(Cluster).log
+executable = /home/erees/batch_files/2018/october/bsimplexV3.10_scaffold_connections.sh
+#arguments = $(Process)
+output = $(job)_$(Cluster)_$(Process).out
+error = $(job)_$(Cluster)_$(Process).err
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = /home/erees/scripts, /home/erees/programs/MadsAlbertsen-multi-metagenome-62e7eee, /home/erees/programs/bedtools2, /home/erees/programs/bowtie2-2.3.4.3-linux-x86_64, /home/erees/bin/bin
+#transfer_output_files =
+request_cpus = 10
+# Memory in MBs
+#450GB
+request_memory = 500GB
+# Disk space in KBs
+#750 GB
+request_disk = 1TB
+requirements = (Target.HasGluster == true)
+queue 1
