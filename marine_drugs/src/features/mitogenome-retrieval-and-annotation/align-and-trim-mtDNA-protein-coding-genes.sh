@@ -109,23 +109,24 @@ charpartition=$(grep -h -e "charpartition" $combined_nexus | sed -e 's/charparti
 mrbayes_txt="""
 begin trees;
     [NOTE: tree was copy/pasted from iqtree output]
-    tree mytree = (Geodia_atlantica:0.0394863989,((((((((Cymbaxinella_damicornis:0.0427254052,(Stylissa_carteri:0.0000010023,Axinella_corrugata:0.0034820358):0.0024962957):0.0350022973,Agelas_schmidtii:0.1057058027):0.0403760317,(Halichondria_panicea:0.1477771616,(((((Phorbas_tenacior:0.0425429588,Phorbas_aerolatus:0.0584839434):0.0713840062,(FL2015_42:0.0000010023,FL2015_43:0.0000010023):0.1188023226):0.0254036761,Iotrochota_birotulata:0.0721890769):0.1177001660,(Cliona_varians:0.0418436541,((FL2015_5:0.0000000000,FL2015_4:0.0000000000):0.0000010023,FL2015_37:0.0000010023):0.0107409308):0.1069456874):0.0147042238,Tethya_actinia:0.1054835227):0.0118103667):0.0333500062):0.0118973080,(Phakellia_ventilabrum:0.0802092926,((Ptilocaulis_walpersi:0.0682455487,Ectyoplasia_ferox:0.0841239407):0.1401877706,Topsentia_ophiraphidites:0.0658592237):0.0193997120):0.0095500239):0.0067864669,((((((Dendrilla_antartica:0.0229190468,Igernella_notabilis:0.0414288423):0.3233820559,((((Spongia_officinalis:0.0092685695,(FL2014_9:0.0000010023,FL2014_3:0.0000010023):0.0092401240):0.0017211796,Hippospongia_lachne:0.0142005040):0.0063368838,(((FL2015_30:0.0000000000,FL2015_9:0.0000000000):0.0000010023,FL2015_34:0.0000010023):0.0000010023,FL2015_8:0.0009535481):0.0233645928):0.0054098786,Vaceletia_sp__GW948:0.0454024732):1.1023409658):0.1908932719,(((Halisarca_caerulea:0.0214182581,Halisarca_dujardinii:0.0451653834):0.0124480773,Chondrilla_aff__nucula_CHOND:0.0228502544):0.1033014045,Aplysina_fulva:0.1240344404):0.0319623781):0.0250786400,((Plakinastrella_cf__onkodes_DVL_2011:0.2066553555,Oscarella_carmela:0.0966001045):0.0445247603,((Podila_verticillata:0.3972800455,Rhizopus_arrhizus:0.2615529299):0.2201387721,Allomyces_macrogynus:0.5517200469):0.7649240317):0.0761084591):0.0371447353,((Xestospongia_muta:0.0438892667,Callyspongia_plicifera:0.0849954450):0.0267689885,(Amphimedon_compressa:0.0013327601,FL2015_44:0.0004433698):0.1360057297):0.0160186420):0.0237396436,Ephydatia_muelleri:0.0720468714):0.0124111438):0.1326045873,Cinachyrella_kuekenthali:0.0495809450):0.0227277527,Poecillastra_compressa:0.0457719397):0.0091010630,Geodia_neptuni:0.0314393112):0.0059688302,Stryphnus_fortis:0.0645336638);
+    tree mytree = (Geodia_atlantica:0.0398506601,((((((((Cymbaxinella_damicornis:0.0427428194,(Stylissa_carteri:0.0000010039,Axinella_corrugata:0.0035119376):0.0025222437):0.0354941216,Agelas_schmidtii:0.1058205797):0.0400429958,(Halichondria_panicea:0.1482437273,(((((Phorbas_tenacior:0.0426456670,Phorbas_aerolatus:0.0590021411):0.0718548131,(FL2015_42:0.0000010039,FL2015_43:0.0000010039):0.1189112372):0.0251987687,Iotrochota_birotulata:0.0726808349):0.1178188342,(Cliona_varians:0.0419228182,((FL2015_5:0.0000000000,FL2015_4:0.0000000000):0.0000010039,FL2015_37:0.0000010039):0.0107642738):0.1070369602):0.0149193996,Tethya_actinia:0.1057451011):0.0119012796):0.0326320172):0.0114529970,(Phakellia_ventilabrum:0.0801861171,((Ptilocaulis_walpersi:0.0680416950,Ectyoplasia_ferox:0.0838579643):0.1415459585,Topsentia_ophiraphidites:0.0656570657):0.0193454332):0.0095672362):0.0068314882,((((((Dendrilla_antartica:0.0228991438,Igernella_notabilis:0.0417042420):0.3240517339,((((Spongia_officinalis:0.0095928627,(FL2014_9:0.0000010039,FL2014_3:0.0000010039):0.0088933133):0.0023914268,Hippospongia_lachne:0.0135319959):0.0065422855,Vaceletia_sp__GW948:0.0503482579):0.0035588816,(Ircinia_fasciculata:0.0075826306,(((FL2015_30:0.0000000000,FL2015_9:0.0000000000):0.0000010039,FL2015_34:0.0000010039):0.0004748177,FL2015_8:0.0004786944):0.0045377310):0.0155949492):1.1041240255):0.1900671837,(((Halisarca_caerulea:0.0214299731,Halisarca_dujardinii:0.0458689756):0.0124395984,Chondrilla_aff__nucula_CHOND:0.0229666497):0.1045185251,Aplysina_fulva:0.1238278208):0.0318670619):0.0252008185,((Plakinastrella_cf__onkodes_DVL_2011:0.2067712779,Oscarella_carmela:0.0965935083):0.0446049036,((Podila_verticillata:0.3974076051,Rhizopus_arrhizus:0.2617759872):0.2196543630,Allomyces_macrogynus:0.5523030356):0.7615065240):0.0771988612):0.0361889123,((Xestospongia_muta:0.0449223546,Callyspongia_plicifera:0.0850200249):0.0269989736,(Amphimedon_compressa:0.0013260560,FL2015_44:0.0004408276):0.1359561023):0.0166538627):0.0241673187,Ephydatia_muelleri:0.0722022123):0.0124062749):0.1323825196,Cinachyrella_kuekenthali:0.0504031530):0.0229253808,Poecillastra_compressa:0.0460104786):0.0091146516,Geodia_neptuni:0.0312706698):0.0059213994,Stryphnus_fortis:0.0642023557);
 end;
 
 begin mrbayes;
 
     [This block defines several different character sets that could be used in partitioning these data
-    and then defines and enforces a partition called combined.]
+    and then defines and enforces a partition called combined.
+    NOTE: charset numbers were updated usign combined.nex]
 
     charset cob = 1-379;
     charset atp9 = 380-455;
-    charset atp8 = 456-504;
-    charset cox3 = 505-762;
-    charset atp6 = 763-998;
-    charset nad5 = 999-1564;
-    charset nad2 = 1565-1945;
-    charset cox2 = 1946-2178;
-    charset nad3 = 2179-2294;
+    charset atp8 = 456-503;
+    charset cox3 = 504-761;
+    charset atp6 = 762-997;
+    charset nad5 = 998-1566;
+    charset nad2 = 1567-1950;
+    charset cox2 = 1951-2183;
+    charset nad3 = 2184-2299;
     partition combined = 9: cob, atp9, atp8, cox3, atp6, nad5, nad2, cox2, nad3;
     set partition=combined;
     lset applyto=(all) nst=6 rates=invgamma;
