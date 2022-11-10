@@ -78,11 +78,45 @@ combine_nexi_script="/media/BRIANDATA3/kwan-bioinformatics-home-evan/evan/marine
 combined_nexus="${OUTDIR}/combined.nex"
 
 nexi=(`find $trim_dir -name "*.nex"`)
+# Combine nexus files for super-gene tree construction
 python $combine_nexi_script \
     --nex ${nexi[@]} \
     --out $combined_nexus
 
-# 5. Create maximum-likelihood tree with IQ-TREE
+# Construct individual gene trees for comparison
+outgroup="Rhizopus_arrhizus"
+
+gene_iqtree_dir="${OUTDIR}/iqtree/cds"
+if [ ! -d $gene_iqtree_dir ];then
+    mkdir -p $gene_iqtree_dir
+fi
+
+for nex in ${nexi[@]};do
+    gene_name=$(basename ${nex/.bmge.nex/})
+    gene_outdir="${gene_iqtree_dir}/${gene_name}"
+    clean_nex="${gene_outdir}/${gene_name}.nex"
+    if [ ! -d $gene_outdir ];then
+        mkdir -p $gene_outdir
+    fi
+    export NEXUS=$nex
+    export GENE=$gene_name
+    export NEX_CLEAN_DIR=$gene_outdir
+    python -c """
+import os
+from Bio.Nexus import Nexus
+nexus = os.getenv('NEXUS')
+gene = os.getenv('GENE')
+outdir = os.getenv('NEX_CLEAN_DIR')
+nex = Nexus.Nexus(nexus)
+outfpath = os.path.join(outdir, f'{gene}.nex')
+print(outfpath)
+fh = nex.write_nexus_data(filename=open(outfpath, 'w'))
+fh.close()
+"""
+    iqtree -s $clean_nex -o $outgroup
+done
+
+# 5. Create maximum-likelihood super-gene tree with IQ-TREE
 # mamba install -c bioconda iqtree -y
 iqtree -nt AUTO -s $combined_nexus
 

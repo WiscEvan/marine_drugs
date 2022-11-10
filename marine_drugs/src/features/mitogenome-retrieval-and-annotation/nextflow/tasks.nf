@@ -3,17 +3,19 @@
 nextflow.enable.dsl=2
 
 
-process EXTRACT {
-  tag "Extracting ${fasta.simpleName}"
+process PARSE_MITOS {
+  tag "Extracting results from ${mitos.simpleName}"
 
   input:
-    path fasta
+    path mitos
 
   output:
-    path "${fasta.simpleName}.fna"
+    path "${mitos.simpleName}"
 
   """
-  TODO: 
+  parse_mitos_results.py \
+    --mitos $mitos \
+    --outdir ${mitos.simpleName}
   """
 }
 
@@ -32,6 +34,28 @@ process ALIGN {
   TODO: 
   """
 }
+
+process CLEAN_NEXUS {
+  tag "Extracting results from ${mitos.simpleName}"
+  publishDir "clean/${nexus}", mode: 'symlink'
+
+  input:
+    path nexus
+
+  output:
+    path "${nexus}"
+
+  script:
+  """
+  #!/usr/bin/env python
+  # imports
+  from Bio.Nexus import Nexus
+  nex = Nexus.Nexus(nexus)
+  fh = nex.write_nexus_data(filename=open(${nexus}, 'w'))
+  fh.close()
+  """
+}
+
 
 process TRIM {
   tag "combining mtDNA genes nexus files"
