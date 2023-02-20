@@ -1,0 +1,11 @@
+sample	busco mode	Percentage Complete	lineage	Complete BUSCOs (C)	Complete and single-copy BUSCOs (S)	Complete and duplicated BUSCOs (D)	Fragmented BUSCOs (F)	Missing BUSCOs (M)	Total BUSCO groups searched	Taxonomic Classification	Activity	Shotgun	Metatranscriptome
+FL2014_9	proteins	65.9329140461216	metazoa_odb10	629	520	109	183	142	954	Hippospongia lachne	None	Yes	Yes
+FL2014_3	proteins	64.0461215932914	metazoa_odb10	611	528	83	181	162	954	Hippospongia lachne	Antibiofilm	Yes	Yes
+FL2015_43	proteins	55.76519916142557	metazoa_odb10	532	402	130	227	195	954	Tedania ignis	Antibiofilm	Yes	Yes
+FL2015_42	proteins	52.620545073375254	metazoa_odb10	502	387	115	210	242	954	Tedania ignis	None	Yes	Yes
+FL2015_9	proteins	48.21802935010482	metazoa_odb10	460	375	85	227	267	954	Ircinia felix	Antibiotic	Yes	Yes
+FL2015_37	proteins	45.70230607966457	metazoa_odb10	436	406	30	108	410	954	Neopetrosia proxima / Spheciospongia vesparium	None	Yes	Yes
+FL2015_34	proteins	42.45283018867924	metazoa_odb10	405	332	73	210	339	954	Ircinia felix	None	Yes	Yes
+FL2015_4	proteins	41.19496855345912	metazoa_odb10	393	367	26	112	449	954	Spheciospongia vesparium	None	Yes	Yes
+FL2015_5	proteins	40.14675052410902	metazoa_odb10	383	316	67	327	244	954	Spheciospongia vesparium	Antibiofilm	Yes	Yes
+FL2015_44	proteins	26.41509433962264	metazoa_odb10	252	207	45	99	603	954	Neopetrosia proxima / Spheciospongia vesparium	Antibiofilm	Yes	Yes
