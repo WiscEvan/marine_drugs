@@ -1,0 +1,25 @@
+---
+title: "sponge_protein_kegg_analysis"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+```
+
+## KEGG analysis (no amphimedon queenslandica filter)
+
+kofamscan was used to annotate KEGG orthologs for the augustus annotated sponge proteins from each metagenome.
+
+As a positive control, _Amphimedon queenslandica_ proteins were also annotated.
+
+```{r no_filter_ko_hits}
+df <- read_tsv(here("marine_drugs/marine_drugs/data/interim/host-annotation/kegg-analysis/ko_counts.long.tsv"))
+```
+
+```{r no_filter_ko_hits_heatmap, echo=TRUE}
+df %>% ggplot(aes(x=))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

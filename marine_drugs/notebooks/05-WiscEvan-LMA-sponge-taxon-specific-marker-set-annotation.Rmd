@@ -9,6 +9,9 @@ library(here)
 library(tidyverse)
 library(ggtext)
 library(cowplot)
+
+# install.packages("ggthemes")
+library(ggthemes) # For colorblind friendly palettes
 ```
 
 
@@ -104,34 +107,61 @@ tidytax <-taxa %>%
          species=str_glue("*{species}*"),
          sponge=str_replace(sponge, "_", "-"))
 
-tidytax %>% 
-  ggplot(aes(x=reorder(species, contig_count), y=log10(contig_count), fill=sponge)) +
-  geom_col(position='dodge') + 
-  scale_fill_discrete(limits=c("FL2014-3",
-                               "FL2014-9",
-                               "FL2015-30",
-                               "FL2015-44",
-                               "FL2015-8",
-                               "FL2015-9",
-                               "FL2015-4",
-                               "FL2015-5",
-                               "FL2015-37",
-                               "FL2015-42",
-                               "FL2015-43"))+
-  scale_y_continuous(expand=c(0,NA))+
+
+sponge_names <- read_tsv(here("marine_drugs/data/raw/sponge_metadata.tsv")) %>% 
+  mutate(taxon=if_else(str_detect(`Taxonomic Classification`, "/"),
+                       # Neopetrosia proxima / Spheciospongia vesparium
+                       str_replace(`Taxonomic Classification`,
+                                   "(.{1}?).*\\s(.*?)\\s/\\s(.{1}?).*\\s(.*)",
+                                   "*\\1. \\2* or<br>*\\3. \\4*"),
+                       str_replace(`Taxonomic Classification`,
+                                   "(.{1}?).*\\s(.*)",
+                                   "*\\1. \\2*")),
+         # Ircinia felix (determined w/mtDNA)
+         taxon=if_else(str_detect(taxon, "determined"),
+                       str_replace(taxon,
+                                   "(.{1}?).*\\s(.*)\\s(.*)\\s(.*)",
+                                   "*\\1. \\2* <br>\\3 \\4"),
+                       taxon)) %>% 
+  select(`Sponge specimen`, taxon, Activity)
+
+tidytax_names <- left_join(tidytax, sponge_names, by=c("sponge" = "Sponge specimen")) %>% 
+  mutate(sponge=str_glue("{taxon}<br>{sponge} ({sponge_type})"))
+
+p <- tidytax_names %>% 
+  ggplot(aes(x=reorder(species, contig_count), y=contig_count, fill=sponge)) +
+  geom_col(position='fill') + 
+  # scale_fill_discrete(limits=c("FL2014-3",
+  #                              "FL2014-9",
+  #                              "FL2015-30",
+  #                              "FL2015-44",
+  #                              "FL2015-8",
+  #                              "FL2015-9",
+  #                              "FL2015-4",
+  #                              "FL2015-5",
+  #                              "FL2015-37",
+  #                              "FL2015-42",
+  #                              "FL2015-43"))+
+  scale_y_continuous(expand=c(0,NA), breaks=seq(0, 1, 1))+
+  # scale_fill_colorblind()+
   facet_wrap(~sponge_type) + 
   coord_flip()+
   theme_bw()+
   labs(title="Top ten contig taxonomies for each of the HMA and LMA sponges",
        subtitle = "HMA sponges' most abundant taxonomy is *candidatus poribacteria bacterium*<br>while LMA sponges' most abundant taxonomy is *cycloclasticus sp. symbiont of poecilosclerida sp. m*",
        x=element_blank(),
-       y="log10(N)")+
+       y="relative abundance")+
   theme(axis.text.y = element_markdown(),
-        axis.text.x = element_text(angle=60, hjust=1),
+        # axis.text.x = element_text(angle=60, hjust=1),
         plot.subtitle = element_markdown(),
         plot.title.position = "plot",
         legend.text = element_markdown())
 
+ggsave(
+  filename=here("marine_drugs/notebooks/05-WiscEvan-LMA-sponge-taxon-specific-marker-set-annotation_files/top-ten-taxa-by-sponge-type-and-sponge-shared-barplot.png"),
+  p)
+
+p
 ```
 
 ```{r top-ten-taxa-by-sponge-type-and-sponge-barplots}
@@ -154,7 +184,7 @@ tidytax <-taxa %>%
          sponge=str_replace(sponge, "_", "-"))
 
 
-sponge_names <- read_tsv(here("marine_drugs/data/raw/sponge_metadata.tsv")) %>% 
+sponge_names <- read_tsv(here("~/marine_drugs/marine_drugs/data/raw/sponge_metadata.tsv")) %>% 
   mutate(taxon=if_else(str_detect(`Taxonomic Classification`, "/"),
                        # Neopetrosia proxima / Spheciospongia vesparium
                        str_replace(`Taxonomic Classification`,
