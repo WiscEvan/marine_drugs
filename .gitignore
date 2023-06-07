@@ -3,13 +3,13 @@
 .DS_Store
 
 .vscode/
-marine_drugs/data/raw/assemblies/*.fasta
-marine_drugs/data/raw/assemblies/*.stats.tsv
+sponge_paper/data/raw/assemblies/*.fasta
+sponge_paper/data/raw/assemblies/*.stats.tsv
 
 # Bulky Data
-marine_drugs/data/interim/assemblies/*.fna
-marine_drugs/data/interim/binning/
-marine_drugs/data/
+sponge_paper/data/interim/assemblies/*.fna
+sponge_paper/data/interim/binning/
+sponge_paper/data/
 
 #slurm and makeflow generated files
 *.err

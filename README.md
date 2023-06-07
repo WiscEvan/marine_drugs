@@ -4,7 +4,7 @@ Repository to host analyses for the Sponge Paper
 
 ## Overview of Sponges and their associated data
 
-Contents of: `marine_drugs/data/raw/sponge_metadata.tsv`
+Contents of: `sponge_paper/data/raw/sponge_metadata.tsv`
 
 | Sponge specimen | Taxonomic Classification                       | Activity    | Shotgun | Metatranscriptome |
 | --------------- | ---------------------------------------------- | ----------- | ------- | ----------------- |
@@ -52,7 +52,7 @@ make env
 conda activate sponges
 
 # Example usage:
-jupyter notebook marine_drugs/notebooks/otu_embeddings.ipynb
+jupyter notebook sponge_paper/notebooks/otu_embeddings.ipynb
 ```
 
 I've reformatted the directory structure following the [Cookiecutter Data Science](http://drivendata.github.io/cookiecutter-data-science/#cookiecutter-data-science "Cookiecutter Data Science Site") repo.
@@ -65,18 +65,18 @@ As mentioned in the [notebooks section](http://drivendata.github.io/cookiecutter
 
 ### FL2015-43 *Tedania ignis*
 
-<img src="marine_drugs/reports/figures/FL2015-43-tedania-ignis.JPG"
+<img src="sponge_paper/reports/figures/FL2015-43-tedania-ignis.JPG"
      alt="FL2015-43 _Tedania ignis_"
      style="float:left;margin:5px;width:200px;"/>
 
 ### FL2015-9 *Ircinia felix*
 
-<img src="marine_drugs/reports/figures/FL2015-9-ircinia-felix.JPG"
+<img src="sponge_paper/reports/figures/FL2015-9-ircinia-felix.JPG"
      alt="FL2015-9 Ircinia felix"
      style="float:left;margin:5px;width:200px;"/>
 
 ### FL2015-44 _Neopetrosia proxima_ or _Spheciospongia versparium_
 
-<img src="marine_drugs/reports/figures/FL2015-44-neopetrosia_proxima-or-spheciospongia_versparum.JPG"
+<img src="sponge_paper/reports/figures/FL2015-44-neopetrosia_proxima-or-spheciospongia_versparum.JPG"
      alt="FL2015-44 _Neopetrosia proxima_ or _Spheciospongia versparium_"
      style="float:none;margin:5px;width:200px;"/>
