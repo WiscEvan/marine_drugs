@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-export PATH="$PATH:$HOME/marine_drugs/marine_drugs/src/features/"
-
-outdir="$HOME/marine_drugs/marine_drugs/data/raw/assemblies"
-metagenomes=`ls ${outdir}/*.fasta`
-
-stat_metagenome.py --write-base-stats=${outdir} ${metagenomes[@]} "${outdir}/unfiltered_assemblies_stats.tsv"

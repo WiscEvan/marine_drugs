@@ -1,0 +1,1 @@
+docker run --volume ~/sponge_paper/sponge_paper/data/interim/host-assembly/fastas/FL2015_37/:/input/:ro --volume ~/sponge_paper/sponge_paper/data/interim/host-assembly/gene-calling/:/output:rw --user=$(id -u):$(id -g) --rm -it --detach=false augustus

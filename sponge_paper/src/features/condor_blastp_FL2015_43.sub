@@ -1,0 +1,18 @@
+
+job = FL2015_43
+universe = vanilla
+log = $(job)_$(Cluster).log
+executable = /home/erees/sponge_paper/sponge_paper/src/features/condor_blastp_FL2015_43.sh
+#arguments = $(Process)
+output = logs/$(job)_$(Cluster)_$(Process).out
+error = logs/$(job)_$(Cluster)_$(Process).err
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+# NOTE: You will need the /home/erees/sponge_paper/sponge_paper/src/features/diamond executable available to transfer to the execute node.
+transfer_input_files = /home/erees/sponge_paper/sponge_paper/data/interim/binning/FL2015_43.orfs.faa, /home/erees/sponge_paper/sponge_paper/src/features/diamond
+request_cpus = 16
+request_memory = 200GB
+request_disk = 500GB
++LongJob = true
+Requirements = (Target.HasCHTCStaging == true)
+queue 1
